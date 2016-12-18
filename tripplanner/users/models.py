@@ -10,9 +10,13 @@ class User(db.Model):
     username = db.Column(db.String(255), nullable=False, index=True, unique=True)
     password = db.Column(db.String(255), nullable=False, server_default='')
 
+    roles = db.relationship('Role', secondary='user_roles', backref=db.backref('users',
+                                                                               lazy='dynamic'))
+
     def __init__(self, username, raw_password):
         self.username = username
         self.password = utils.hash_password(raw_password)
+        self.roles.append(Role.REGULAR)
 
     def verify_password(self, raw_password):
         return utils.verify_password(raw_password, self.password)
@@ -46,3 +50,27 @@ class User(db.Model):
 
         user = User.query.get(data['id'])
         return user
+
+
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, index=True)
+
+    @staticmethod
+    def create_roles():
+        admin_role = Role(name="admin")
+        manager_role = Role(name="manager")
+        regular_role = Role(name="regular")
+
+        db.session.add_all([admin_role, manager_role, regular_role])
+        db.session.commit()
+
+        Role.ADMIN = admin_role
+        Role.MANAGER = manager_role
+        Role.REGULAR = regular_role
+
+
+class UserRoles(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id', ondelete='CASCADE'))

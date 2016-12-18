@@ -4,7 +4,7 @@ import unittest
 from itsdangerous import SignatureExpired
 
 from tripplanner import db, create_app, utils
-from tripplanner.users.models import User
+from tripplanner.users.models import User, Role
 
 
 def create_user():
@@ -26,7 +26,7 @@ class TestUser(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         db.create_all()
-
+        Role.create_roles()
         self.client = self.app.test_client()
 
     def tearDown(self):
@@ -64,3 +64,12 @@ class TestUser(unittest.TestCase):
         actual_user = User.get_user_given_rest_token('phony_token2123345wafweqrfds')
         self.assertIsNone(actual_user)
 
+    def test_add_roles_to_user(self):
+        user = create_and_save_user()
+        user.roles.append(Role.ADMIN)
+        db.session.add(user)
+        db.session.commit()
+
+        actual_user = User.query.get(user.id)
+        self.assertIn(Role.ADMIN, actual_user.roles)
+        self.assertIn(Role.REGULAR, actual_user.roles)  # All have this by default
