@@ -35,3 +35,4 @@ share
 
 # Database
 *.sqlite
+pip-selfcheck.json

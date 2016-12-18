@@ -38,13 +38,6 @@ def all_users():
     return jsonify([{'username': u.username} for u in users])
 
 
-@user_app.route('/users_auth/', methods=['POST', 'GET'])
-@token_auth.login_required
-def all_users_auth():
-    users = User.query.all()
-    return jsonify([{'username': u.username} for u in users])
-
-
 @user_app.route('/token/', methods=['POST'])
 @basic_auth.login_required
 def get_token():

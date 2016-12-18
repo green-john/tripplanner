@@ -20,7 +20,6 @@ class User(db.Model):
     def generate_rest_auth_token(self, expiration=600):
         """
         Generates a token for the user to authenticate on REST requests.
-        :param expiration: duration of the validity of the token
         :return: token for the user to authenticate
         """
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
@@ -34,16 +33,16 @@ class User(db.Model):
         raises an error indicating the token is invalid or
         has expired
         :param token: encrypted auth token with user id
+        :param expiration: time for which the token is valid
         :return: user with the decrypted id or None if token is invalid
         """
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
-        except BadSignature:
-            return None
         except SignatureExpired:
-            return None
+            raise  # re-raise the last exception
+        except BadSignature:
+            return None  # Bad signature. Return None
 
-        print(data)
         user = User.query.get(data['id'])
         return user
