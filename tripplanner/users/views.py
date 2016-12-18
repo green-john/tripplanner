@@ -3,12 +3,16 @@ from flask_restful import abort
 from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
 from tripplanner import db
-from tripplanner.users.models import User
+from tripplanner.users.models import User, Role
 
 
 user_app = Blueprint('user', __name__)
 basic_auth = HTTPBasicAuth()
 token_auth = HTTPTokenAuth(scheme='Token')
+
+
+def is_admin_or_manager(user):
+    return Role.admin() in user.roles or Role.manager() in user.roles
 
 
 @user_app.route('/users/', methods=['POST'])
@@ -27,7 +31,10 @@ def register_user():
 
 
 @user_app.route('/users/<int:_id>/')
+@token_auth.login_required
 def get_user(_id):
+    if not is_admin_or_manager(g.user) and g.user.id != _id:
+        abort(401)  # Users can only see themselves
     user = User.query.get(_id)
     if not user:
         abort(400)
@@ -36,7 +43,10 @@ def get_user(_id):
 
 
 @user_app.route('/users/')
+@token_auth.login_required
 def all_users():
+    if not is_admin_or_manager(g.user):
+        return abort(401)
     users = User.query.all()
     return jsonify([{'username': u.username} for u in users])
 

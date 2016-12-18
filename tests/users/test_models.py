@@ -5,18 +5,7 @@ from itsdangerous import SignatureExpired
 
 from tripplanner import db, create_app, utils
 from tripplanner.users.models import User, Role
-
-
-def create_user():
-    return User('user1', 'pass')
-
-
-def create_and_save_user():
-    u = User('user1', 'pass')
-    db.session.add(u)
-    db.session.commit()
-
-    return u
+from tests import test_utils
 
 
 class TestUser(unittest.TestCase):
@@ -35,15 +24,15 @@ class TestUser(unittest.TestCase):
         self.app_context.pop()
 
     def test_password_is_hashed(self):
-        u = create_user()
+        u = test_utils.create_user()
         self.assertNotEqual(u.password, 'pass')
 
     def test_validate_password(self):
-        u = create_user()
-        self.assertTrue(u.verify_password('pass'))
+        u = test_utils.create_user()
+        self.assertTrue(u.verify_password('pass1'))
 
     def test_generate_rest_token_happy(self):
-        expected_user = create_and_save_user()
+        expected_user = test_utils.create_and_save_user()
 
         user_token = expected_user.generate_rest_auth_token()
 
@@ -52,7 +41,7 @@ class TestUser(unittest.TestCase):
 
     def test_generate_rest_token_timeout(self):
         exp_time = 1
-        expected_user = create_and_save_user()
+        expected_user = test_utils.create_and_save_user()
 
         token = expected_user.generate_rest_auth_token(exp_time)
         time.sleep(2)
@@ -65,11 +54,12 @@ class TestUser(unittest.TestCase):
         self.assertIsNone(actual_user)
 
     def test_add_roles_to_user(self):
-        user = create_and_save_user()
-        user.roles.append(Role.ADMIN)
+        user = test_utils.create_and_save_user()
+        user.roles.append(Role.admin())
         db.session.add(user)
         db.session.commit()
 
         actual_user = User.query.get(user.id)
-        self.assertIn(Role.ADMIN, actual_user.roles)
-        self.assertIn(Role.REGULAR, actual_user.roles)  # All have this by default
+        self.assertIn(Role.admin(), actual_user.roles)
+        self.assertIn(Role.regular(), actual_user.roles)  # All have this by default
+        self.assertNotIn(Role.manager(), actual_user.roles)

@@ -16,7 +16,7 @@ class User(db.Model):
     def __init__(self, username, raw_password):
         self.username = username
         self.password = utils.hash_password(raw_password)
-        self.roles.append(Role.REGULAR)
+        self.roles.append(Role.regular())
 
     def verify_password(self, raw_password):
         return utils.verify_password(raw_password, self.password)
@@ -51,10 +51,16 @@ class User(db.Model):
         user = User.query.get(data['id'])
         return user
 
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
 
 class Role(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True, index=True)
+
+    def __repr__(self):
+        return '<Role {}>'.format(self.name)
 
     @staticmethod
     def create_roles():
@@ -65,9 +71,17 @@ class Role(db.Model):
         db.session.add_all([admin_role, manager_role, regular_role])
         db.session.commit()
 
-        Role.ADMIN = admin_role
-        Role.MANAGER = manager_role
-        Role.REGULAR = regular_role
+    @staticmethod
+    def admin():
+        return Role.query.filter_by(name='admin').first()
+
+    @staticmethod
+    def manager():
+        return Role.query.filter_by(name='manager').first()
+
+    @staticmethod
+    def regular():
+        return Role.query.filter_by(name='regular').first()
 
 
 class UserRoles(db.Model):
