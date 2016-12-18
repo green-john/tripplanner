@@ -11,16 +11,19 @@ basic_auth = HTTPBasicAuth()
 token_auth = HTTPTokenAuth(scheme='Token')
 
 
-@user_app.route('/users', methods=['POST'])
+@user_app.route('/users/', methods=['POST'])
 def register_user():
-    username = request.json.get('username')
-    password = request.json.get('password')
+    username = request.get_json().get('username')
+    password = request.get_json().get('password')
+
+    if not username or not password or len(request.get_json()) > 2:
+        abort(400)
 
     user = User(username, password)
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({'username': username}), 201, {'Location': url_for('get_user', _id=user.id, _external=True)}
+    return jsonify({'username': username}), 201
 
 
 @user_app.route('/users/<int:_id>/')
