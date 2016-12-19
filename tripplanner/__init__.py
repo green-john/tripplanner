@@ -1,11 +1,14 @@
 from flask import Flask
 from flask_mail import Mail
 from flask_sqlalchemy import SQLAlchemy
+from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
 from tripplanner.config import config
 
 db = SQLAlchemy()
 mail = Mail()
+basic_auth = HTTPBasicAuth()
+token_auth = HTTPTokenAuth(scheme='Token')
 
 
 def create_app(config_name):

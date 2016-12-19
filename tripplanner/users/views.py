@@ -1,13 +1,10 @@
 from flask import Blueprint, request, jsonify, g, abort
-from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
-from tripplanner import db
+from tripplanner import db, basic_auth, token_auth
 from tripplanner.users.models import User, Role
 
 
 user_app = Blueprint('user', __name__)
-basic_auth = HTTPBasicAuth()
-token_auth = HTTPTokenAuth(scheme='Token')
 
 
 def is_admin_or_manager(user):
