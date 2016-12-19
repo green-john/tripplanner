@@ -35,6 +35,15 @@ class User(db.Model):
                                             expires_in=expiration)
         return s.dumps({'id': self.id})
 
+    def is_admin(self):
+        return Role.admin() in self.roles
+
+    def is_manager(self):
+        return Role.manager() in self.roles
+
+    def is_regular(self):
+        return Role.regular() in self.roles
+
     @staticmethod
     def get_user_given_rest_token(token):
         """

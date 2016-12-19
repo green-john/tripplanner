@@ -6,7 +6,7 @@ from nose2.tools import params
 
 from tripplanner import db, create_app
 from tripplanner.users.models import User, Role
-from tests import test_utils
+from tests import utils
 
 
 def decode_data(encoded_data):
@@ -51,8 +51,8 @@ class TestUserViews(unittest.TestCase):
         self.assertEqual(response.status_code, status_code)
 
     def test_get_auth_token_success(self):
-        user = test_utils.create_and_save_user()
-        auth_header = test_utils.encode_info_basic_http_auth(user.username, 'pass1')
+        user = utils.create_and_save_user()
+        auth_header = utils.encode_info_basic_http_auth(user.username, 'pass1')
         response = self.client.post('/token/', headers={
             'Authorization': auth_header
         })
@@ -60,8 +60,8 @@ class TestUserViews(unittest.TestCase):
         self.assertIn('token', json.loads(decoded_data))
 
     def test_get_auth_token_incorrect_credentials(self):
-        user = test_utils.create_and_save_user()
-        auth_header = test_utils.encode_info_basic_http_auth(user.username, 'wrongPass')
+        user = utils.create_and_save_user()
+        auth_header = utils.encode_info_basic_http_auth(user.username, 'wrongPass')
         response = self.client.post('/token/', headers={
             'Authorization': auth_header
         })
@@ -69,16 +69,16 @@ class TestUserViews(unittest.TestCase):
         self.assertEqual(response.status_code, 401)
 
     def test_get_all_users_from_admin_success(self):
-        admin = test_utils.create_user_admin()
+        admin = utils.create_user_admin()
         usernames = ['u1', 'u2', 'u3']
         for u in usernames:
-            test_utils.create_and_save_user(u, 'pass{}'.format(u))
+            utils.create_and_save_user(u, 'pass{}'.format(u))
 
         usernames.append('admin')
 
         token = admin.generate_rest_auth_token()
         response = self.client.get('/users/', headers={
-            'Authorization': test_utils.encode_info_token_http_auth(token)
+            'Authorization': utils.encode_info_token_http_auth(token)
         })
 
         self.assertEqual(response.status_code, 200)
@@ -88,22 +88,22 @@ class TestUserViews(unittest.TestCase):
 
     def test_get_all_users_from_regular_user_error(self):
         usernames = ['u1', 'u2', 'u3']
-        users = [test_utils.create_and_save_user(u, 'pass{}'.format(u))
+        users = [utils.create_and_save_user(u, 'pass{}'.format(u))
                  for u in usernames]
 
         token = users[0].generate_rest_auth_token()
         response = self.client.get('/users/', headers={
-            'Authorization': test_utils.encode_info_token_http_auth(token)
+            'Authorization': utils.encode_info_token_http_auth(token)
         })
 
         self.assertEqual(response.status_code, 401)
 
     def test_get_one_user_correct_id(self):
-        u = test_utils.create_and_save_user('u1', 'pass_u1')
+        u = utils.create_and_save_user('u1', 'pass_u1')
         token = u.generate_rest_auth_token()
 
         response = self.client.get('/users/{}/'.format(u.id), headers={
-            'Authorization': test_utils.encode_info_token_http_auth(token)
+            'Authorization': utils.encode_info_token_http_auth(token)
         })
 
         self.assertEqual(response.status_code, 200)
@@ -111,24 +111,24 @@ class TestUserViews(unittest.TestCase):
         self.assertEqual(u_dict['username'], u.username)
 
     def test_get_one_user_other_user(self):
-        u1 = test_utils.create_and_save_user('u1', 'pass_u1')
-        u2 = test_utils.create_and_save_user('u2', 'pass_u2')
+        u1 = utils.create_and_save_user('u1', 'pass_u1')
+        u2 = utils.create_and_save_user('u2', 'pass_u2')
         token = u1.generate_rest_auth_token()
 
         response = self.client.get('/users/{}/'.format(u2.id), headers={
-            'Authorization': test_utils.encode_info_token_http_auth(token)
+            'Authorization': utils.encode_info_token_http_auth(token)
         })
 
         self.assertEqual(response.status_code, 401)
 
     def test_update_user_with_user_manager(self):
-        u_manager = test_utils.create_user_manager()
-        u1 = test_utils.create_and_save_user('u1', 'pu1', 'Us1', 'Er1')
-        u2 = test_utils.create_and_save_user('u2', 'pu2', 'Us2', 'Er2')
+        u_manager = utils.create_user_manager()
+        u1 = utils.create_and_save_user('u1', 'pu1', 'Us1', 'Er1')
+        u2 = utils.create_and_save_user('u2', 'pu2', 'Us2', 'Er2')
 
         token = u_manager.generate_rest_auth_token()
         headers = {
-            'Authorization': test_utils.encode_info_token_http_auth(token)
+            'Authorization': utils.encode_info_token_http_auth(token)
         }
 
         for actual_u in [u1, u2]:
@@ -147,13 +147,13 @@ class TestUserViews(unittest.TestCase):
             self.assertEqual(u_from_db.last_name, new_last_name)
 
     def test_delete_user_with_user_manager(self):
-        u_manager = test_utils.create_user_manager()
-        u1 = test_utils.create_and_save_user('u1', 'pu1', 'Us1', 'Er1')
-        u2 = test_utils.create_and_save_user('u2', 'pu2', 'Us2', 'Er2')
+        u_manager = utils.create_user_manager()
+        u1 = utils.create_and_save_user('u1', 'pu1', 'Us1', 'Er1')
+        u2 = utils.create_and_save_user('u2', 'pu2', 'Us2', 'Er2')
 
         token = u_manager.generate_rest_auth_token()
         headers = {
-            'Authorization': test_utils.encode_info_token_http_auth(token)
+            'Authorization': utils.encode_info_token_http_auth(token)
         }
 
         for actual_u in [u1, u2]:

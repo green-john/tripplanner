@@ -11,7 +11,7 @@ token_auth = HTTPTokenAuth(scheme='Token')
 
 
 def is_admin_or_manager(user):
-    return Role.admin() in user.roles or Role.manager() in user.roles
+    return user.is_admin() or user.is_manager()
 
 
 @user_app.route('/users/', methods=['POST'])

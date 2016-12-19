@@ -1,7 +1,7 @@
 """
 Utils for the tripplanner app
 """
-
+import datetime
 from passlib.apps import custom_app_context
 
 
@@ -22,3 +22,7 @@ def verify_password(raw_password, hashed_password):
     :return: `True` if passwords match. `False` otherwise
     """
     return custom_app_context.verify(raw_password, hashed_password)
+
+
+def parse_date(any_date):
+    return datetime.date.today()
