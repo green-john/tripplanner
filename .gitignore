@@ -20,13 +20,8 @@ pip-log.txt
 .coverage
 .tox
 
-#Translations
-*.mo
-
 #Mr Developer
 venv
-*.pyc
-build
 include/
 lib/
 .idea
@@ -36,3 +31,4 @@ share
 # Database
 *.sqlite
 pip-selfcheck.json
+__pycache__

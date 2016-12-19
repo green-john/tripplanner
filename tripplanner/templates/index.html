@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head ng-app="tripplanner">
+    <meta charset="UTF-8">
+    <title ng-bind="$root.pageTitle"></title>
+
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/grid12.css">
+
+    <script src="/static/lib/angular/angular.js"></script>
+    <script src="/static/lib/angular/angular-ui-router.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <ui-view>
+                <h1>Welcome Friend</h1>
+            </ui-view>
+            <a ns></a>
+        </div>
+    </div>
+
+    <script src="/static/js/app.module.js"></script>
+
+</body>
+</html>

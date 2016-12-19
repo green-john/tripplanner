@@ -1,4 +1,5 @@
 from flask import Blueprint, request, abort, g, jsonify
+from flask import make_response
 from flask_httpauth import HTTPTokenAuth
 
 from tripplanner import db, token_auth
@@ -6,6 +7,12 @@ from tripplanner.users.models import User
 from tripplanner.core.models import Trip
 
 core_app = Blueprint('core', __name__)
+
+
+@core_app.route('/')
+def index_page_redirect_to_angular(**kwargs):
+    with open('tripplanner/templates/index.html') as f:
+        return make_response(f.read())
 
 
 @core_app.route('/trips/', methods=['POST'])
