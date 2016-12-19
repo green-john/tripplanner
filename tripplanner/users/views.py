@@ -1,5 +1,4 @@
-from flask import Blueprint, request, jsonify, url_for, g
-from flask_restful import abort
+from flask import Blueprint, request, jsonify, g, abort
 from flask_httpauth import HTTPBasicAuth, HTTPTokenAuth
 
 from tripplanner import db
@@ -19,18 +18,21 @@ def is_admin_or_manager(user):
 def register_user():
     username = request.get_json().get('username')
     password = request.get_json().get('password')
+    first_name = request.get_json().get('first_name')
+    last_name = request.get_json().get('last_name')
 
-    if not username or not password or len(request.get_json()) > 2:
+    if (not username or not password or not first_name or
+            not last_name or len(request.get_json()) > 4):
         abort(400)
 
-    user = User(username, password)
+    user = User(username, password, first_name, last_name)
     db.session.add(user)
     db.session.commit()
 
     return jsonify({'username': username}), 201
 
 
-@user_app.route('/users/<int:_id>/')
+@user_app.route('/users/<int:_id>/', methods=['GET'])
 @token_auth.login_required
 def get_user(_id):
     if not is_admin_or_manager(g.user) and g.user.id != _id:
@@ -42,7 +44,42 @@ def get_user(_id):
     return jsonify({'username': user.username})
 
 
-@user_app.route('/users/')
+@user_app.route('/users/<int:_id>/', methods=['PUT'])
+@token_auth.login_required
+def update_user(_id):
+    if not is_admin_or_manager(g.user) and g.user.id != _id:
+        abort(401)  # Users can only update themselves
+    user = User.query.get(_id)
+    new_first_name = request.get_json().get('first_name')
+    new_last_name = request.get_json().get('last_name')
+
+    changes = False
+    if new_first_name:
+        user.first_name = new_first_name
+        changes = True
+
+    if new_last_name:
+        user.last_name = new_last_name
+        changes = True
+
+    if changes:
+        db.session.add(user)
+        db.session.commit()
+
+    return jsonify({}), 201
+
+
+@user_app.route('/users/<int:_id>/', methods=['DELETE'])
+@token_auth.login_required
+def delete_user(_id):
+    if not is_admin_or_manager(g.user) and g.user.id != _id:
+        abort(401)  # Users can only see themselves
+    User.query.filter_by(id=_id).delete()
+
+    return jsonify({}), 204
+
+
+@user_app.route('/users/', methods=['GET'])
 @token_auth.login_required
 def all_users():
     if not is_admin_or_manager(g.user):

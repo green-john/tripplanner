@@ -10,12 +10,17 @@ class User(db.Model):
     username = db.Column(db.String(255), nullable=False, index=True, unique=True)
     password = db.Column(db.String(255), nullable=False, server_default='')
 
+    first_name = db.Column(db.String(255))
+    last_name = db.Column(db.String(255))
+
     roles = db.relationship('Role', secondary='user_roles', backref=db.backref('users',
                                                                                lazy='dynamic'))
 
-    def __init__(self, username, raw_password):
+    def __init__(self, username, raw_password, first_name, last_name):
         self.username = username
         self.password = utils.hash_password(raw_password)
+        self.first_name = first_name
+        self.last_name = last_name
         self.roles.append(Role.regular())
 
     def verify_password(self, raw_password):

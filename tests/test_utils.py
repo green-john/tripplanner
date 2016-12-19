@@ -4,12 +4,13 @@ from tripplanner import db
 from tripplanner.users.models import User, Role
 
 
-def create_user(user='user1', password='pass1'):
-    return User(user, password)
+def create_user(user='user1', password='pass1', first_name='Us', last_name='Ser'):
+    return User(user, password, first_name, last_name)
 
 
-def create_and_save_user(username='user1', password='pass1'):
-    u = create_user(username, password)
+def create_and_save_user(username='user1', password='pass1',
+                         first_name='Us', last_name='Ser'):
+    u = create_user(username, password, first_name, last_name)
     db.session.add(u)
     db.session.commit()
 
@@ -47,3 +48,12 @@ def create_user_admin(username='admin', password='admin'):
     db.session.commit()
 
     return admin_user
+
+
+def create_user_manager(username='manager', password='manager'):
+    manager_user = create_and_save_user(username, password)
+    manager_user.roles.append(Role.manager())
+    db.session.add(manager_user)
+    db.session.commit()
+
+    return manager_user

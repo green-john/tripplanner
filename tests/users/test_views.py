@@ -5,7 +5,7 @@ import unittest
 from nose2.tools import params
 
 from tripplanner import db, create_app
-from tripplanner.users.models import Role
+from tripplanner.users.models import User, Role
 from tests import test_utils
 
 
@@ -29,7 +29,8 @@ class TestUserViews(unittest.TestCase):
         self.app_context.pop()
 
     def test_register_user_success(self):
-        user = {'username': 'test1', 'password': 'pass1'}
+        user = {'username': 'test1', 'password': 'pass1', 'first_name': 'Us',
+                'last_name': 'Er'}
         response = self.client.post('/users/', data=json.dumps(user),
                                     content_type='application/json')
         decoded_data = decode_data(response.data)
@@ -40,7 +41,10 @@ class TestUserViews(unittest.TestCase):
             ({'password': 'user'}, 400),
             ({'username': 'user', 'password': 'pass', 'other': 'pass'}, 400),
             ({'username': '', 'password': 'pass'}, 400),
-            ({'username': 'user', 'password': ''}, 400))
+            ({'username': 'user', 'password': ''}, 400),
+            ({'username': 'user', 'password': 'pass', 'first_name': 'Us'}, 400),
+            ({'username': 'user', 'password': '', 'last_name': 'Er'}, 400),
+            ({'username': 'user', 'password': 'pass', 'first_name': 'Us'}, 400))
     def test_register_user_incomplete_data(self, user_data, status_code):
         response = self.client.post('/users/', data=json.dumps(user_data),
                                     content_type='application/json')
@@ -116,3 +120,44 @@ class TestUserViews(unittest.TestCase):
         })
 
         self.assertEqual(response.status_code, 401)
+
+    def test_update_user_with_user_manager(self):
+        u_manager = test_utils.create_user_manager()
+        u1 = test_utils.create_and_save_user('u1', 'pu1', 'Us1', 'Er1')
+        u2 = test_utils.create_and_save_user('u2', 'pu2', 'Us2', 'Er2')
+
+        token = u_manager.generate_rest_auth_token()
+        headers = {
+            'Authorization': test_utils.encode_info_token_http_auth(token)
+        }
+
+        for actual_u in [u1, u2]:
+            new_first_name = 'Mod{}'.format(actual_u.first_name)
+            new_last_name = 'Mod{}'.format(actual_u.last_name)
+            update_data = {'first_name': new_first_name,
+                           'last_name': new_last_name}
+            response = self.client.put('/users/{}/'.format(actual_u.id),
+                                       data=json.dumps(update_data),
+                                       content_type='application/json',
+                                       headers=headers)
+
+            self.assertEqual(response.status_code, 201)
+            u_from_db = User.query.get(actual_u.id)
+            self.assertEqual(u_from_db.first_name, new_first_name)
+            self.assertEqual(u_from_db.last_name, new_last_name)
+
+    def test_delete_user_with_user_manager(self):
+        u_manager = test_utils.create_user_manager()
+        u1 = test_utils.create_and_save_user('u1', 'pu1', 'Us1', 'Er1')
+        u2 = test_utils.create_and_save_user('u2', 'pu2', 'Us2', 'Er2')
+
+        token = u_manager.generate_rest_auth_token()
+        headers = {
+            'Authorization': test_utils.encode_info_token_http_auth(token)
+        }
+
+        for actual_u in [u1, u2]:
+            response = self.client.delete('/users/{}/'.format(actual_u.id),
+                                          headers=headers)
+            self.assertEqual(response.status_code, 204)
+            self.assertIsNone(User.query.get(actual_u.id))

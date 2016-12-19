@@ -3,9 +3,9 @@ import unittest
 
 from itsdangerous import SignatureExpired
 
-from tripplanner import db, create_app, utils
-from tripplanner.users.models import User, Role
 from tests import test_utils
+from tripplanner import db, create_app
+from tripplanner.users.models import User, Role
 
 
 class TestUser(unittest.TestCase):
