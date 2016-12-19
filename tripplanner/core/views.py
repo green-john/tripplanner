@@ -1,10 +1,9 @@
 from flask import Blueprint, request, abort, g, jsonify
 from flask import make_response
-from flask_httpauth import HTTPTokenAuth
 
 from tripplanner import db, token_auth
-from tripplanner.users.models import User
 from tripplanner.core.models import Trip
+from tripplanner.users.models import User
 
 core_app = Blueprint('core', __name__)
 
