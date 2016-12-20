@@ -4,9 +4,9 @@
     angular.module('tripplanner')
         .run(checkRouting);
 
-    checkRouting.$inject = ['$rootScope', '$location', 'AuthService'];
+    checkRouting.$inject = ['$rootScope','$http', '$location', 'AuthService'];
 
-    function checkRouting($rootScope, $location, AuthService) {
+    function checkRouting($rootScope, $http, $location, AuthService) {
         var routesNoAuth = ['/login'];
 
         var requiresAuth = function(route) {
@@ -27,6 +27,8 @@
             if (requiresAuth($location.url()) && !AuthService.userLoggedIn()) {
                 $location.path('/login');
             }
-        })
+        });
+
+        $http.defaults.headers.common['Content-Type'] = 'application/json'
     }
 })();

@@ -1,8 +1,9 @@
+import calendar
+import datetime
 import os
 
-import datetime
 from flask import (Blueprint, request, abort, g, jsonify, send_file,
-                   send_from_directory, render_template)
+                   send_from_directory)
 
 from tripplanner import db, token_auth, utils
 from tripplanner.core.models import Trip
@@ -77,7 +78,7 @@ def get_all_trips():
     return jsonify(response)
 
 
-@core_app.route('/trips/filter/', methods=['GET'])
+@core_app.route('/trips/filter/', methods=['POST'])
 @token_auth.login_required
 def filter_trips():
     destination = request.get_json().get('destination')
@@ -93,6 +94,32 @@ def filter_trips():
 
     if end_date:
         trips = trips.filter_by(end_date=utils.parse_date(end_date))
+
+    response = []
+    for t in trips.all():
+        response.append({'id': t.id, 'destination': t.destination,
+                         'start_date': utils.print_date(t.start_date),
+                         'end_date': utils.print_date(t.end_date),
+                         'comment': t.comment})
+
+    return jsonify(response)
+
+
+@core_app.route('/trips/next_month_trips', methods=['GET'])
+@token_auth.login_required
+def get_trips_next_month():
+    today = datetime.date.today()
+    new_year = today.year
+    new_month = today.month + 1
+    if new_month == 13:
+        new_year += 1
+        new_month = 1
+
+    days_in_month = calendar.monthrange(new_year, new_month)[1]
+    beg_next_month = datetime.date(new_year, new_month, 1)
+    end_next_month = datetime.date(new_year, new_month, days_in_month)
+
+    trips = g.user.trips.filter(Trip.start_date.between(beg_next_month, end_next_month))
 
     response = []
     for t in trips.all():

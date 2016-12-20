@@ -137,8 +137,8 @@ class TestCoreViews(unittest.TestCase):
 
         for dest, count in records_to_insert.items():
             query = {'destination': dest}
-            response = self.client.get('/trips/filter/', data=json.dumps(query),
-                                       headers=headers, content_type='application/json')
+            response = self.client.post('/trips/filter/', data=json.dumps(query),
+                                        headers=headers, content_type='application/json')
 
             self.assertEqual(response.status_code, 200)
             data = json.loads(utils.decode_data(response.data))
@@ -158,8 +158,8 @@ class TestCoreViews(unittest.TestCase):
 
         for start_date, count in records_to_insert.items():
             query = {'start_date': start_date}
-            response = self.client.get('/trips/filter/', data=json.dumps(query),
-                                       headers=headers, content_type='application/json')
+            response = self.client.post('/trips/filter/', data=json.dumps(query),
+                                        headers=headers, content_type='application/json')
 
             self.assertEqual(response.status_code, 200)
             data = json.loads(utils.decode_data(response.data))
@@ -179,9 +179,33 @@ class TestCoreViews(unittest.TestCase):
 
         for end_date, count in records_to_insert.items():
             query = {'end_date': end_date}
-            response = self.client.get('/trips/filter/', data=json.dumps(query),
-                                       headers=headers, content_type='application/json')
+            response = self.client.post('/trips/filter/', data=json.dumps(query),
+                                        headers=headers, content_type='application/json')
 
             self.assertEqual(response.status_code, 200)
             data = json.loads(utils.decode_data(response.data))
             self.assertEqual(len(data), count)
+
+    def test_get_itinerary_for_next_month(self):
+        user_admin = utils.create_user_admin()
+        headers = {'Authorization': utils.encode_info_token_http_auth(
+            user_admin.generate_rest_auth_token())}
+        for _ in range(5):
+            today = datetime.date.today()
+            if today.month == 12:
+                next_month = datetime.date(today.year + 1, 1, 1)
+            else:
+                next_month = datetime.date(today.year, today.month + 1, 1)
+            next_month = next_month.strftime("%d/%m/%Y")
+            utils.create_and_save_trip('TEST', next_month, next_month, 'TEST', user_admin)
+
+        for _ in range(5):
+            today = datetime.date.today().strftime("%d/%m/%Y")
+            utils.create_and_save_trip('TEST', today, today, 'TEST', user_admin)
+
+        response = self.client.get('/trips/next_month_trips/', headers=headers)
+        self.assertEqual(response.status_code, 200)
+        data = json.loads(utils.decode_data(response.data))
+
+        self.assertEqual(len(data), 5)
+

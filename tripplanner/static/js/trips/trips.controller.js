@@ -11,7 +11,7 @@
 
         vm.errors = [];
         vm.tripList = [];
-        vm.upcomingTrips = [];
+        vm.nextMonthItinerary = [];
         vm.filteredTrips = [];
 
         vm.destination = "";
@@ -19,16 +19,20 @@
         vm.end_date = "";
         vm.comment = "";
 
+        vm.filter_destination = "";
+        vm.filter_start_date = "";
+        vm.filter_end_date = "";
+
         vm.createTrip = createTrip;
         vm.updateTrip = updateTrip;
         vm.deleteTrip = deleteTrip;
         vm.getAllTrips = getAllTrips;
-        vm.getUpcomingTrips = getUpcomingTrips;
         vm.filterTrips = filterTrips;
 
         vm.user = AuthService.getUser();
 
         getAllTrips();
+        getNextMonthItinerary();
 
         ////////////////////////////////////////
 
@@ -52,6 +56,10 @@
             }
         }
 
+        function getNextMonthItinerary() {
+            var thisMonth = (new Date()).getMonth() + 1;
+        }
+
         function updateTrip() {
 
         }
@@ -69,19 +77,16 @@
             });
         }
 
-        function getUpcomingTrips() {
-            vm.upcomingTrips = [];
-            TripService.getUpcomingTrips().then(function (trips) {
-                vm.upcomingTrips = trips;
-            }, function (response) {
-                _handleErrors(response);
-            });
-        }
-
         function filterTrips() {
             vm.filteredTrips = [];
-            TripService.filterTrips().then(function (trips) {
-                vm.upcomingTrips = trips;
+            var params = {
+                'destination': vm.filter_destination,
+                'start_date': vm.filter_start_date,
+                'end_date': vm.filter_end_date
+            };
+
+            TripService.filterTrips(params).then(function (trips) {
+                vm.filteredTrips = trips;
             }, function (response) {
                 _handleErrors(response);
             });

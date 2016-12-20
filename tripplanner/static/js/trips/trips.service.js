@@ -11,7 +11,6 @@
         return {
             createTrip: createTrip,
             getAllTrips: getAllTrips,
-            getUpcomingTrips: getUpcomingTrips,
             filterTrips: filterTrips
         };
 
@@ -47,12 +46,19 @@
             );
         }
 
-        function getUpcomingTrips() {
+        function filterTrips(params) {
+            var config = {
+                headers: AuthService.getAuthorizationHeader()
+            };
 
-        }
-
-        function filterTrips() {
-
+            return $http.post('/trips/filter/', JSON.stringify(params), config).then(
+                function success(response) {
+                    return response.data;
+                },
+                function failure(response) {
+                    throw response;
+                }
+            )
         }
     }
 })();
