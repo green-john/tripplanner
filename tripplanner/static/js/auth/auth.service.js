@@ -14,14 +14,16 @@
         //////////////////////////
 
         function authenticate(username, password) {
-            var authHeader = SerializerService.encodeBasicAuth(username, password);
+            var authHeader = SerializerService.encodeCredentialsBasicAuth(
+                username, password);
+
             var config = {
                 headers: {
                     'Authorization': authHeader
                 }
             };
 
-            $http.post('/token/', {}, config)
+            return $http.post('/token/', {}, config)
             .then(function success(response) {
                 return response.data;
             }, function failure(response) {

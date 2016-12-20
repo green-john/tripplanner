@@ -24,6 +24,7 @@
         ///////////////////////
 
         function login() {
+            console.log('Logging in');
             var localErrors = [];
             vm.errors = [];
             if (!vm.username) {
@@ -42,6 +43,8 @@
             AuthService.authenticate(vm.username, vm.password)
                 .then(function success(user) {
                     vm.user = user;
+                    alert('User has been logged in');
+                    console.log(user)
                 }, function failure(response) {
                     _handleErrors(response);
                 });
