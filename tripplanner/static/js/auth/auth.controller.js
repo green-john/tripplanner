@@ -4,9 +4,9 @@
     angular.module('tripplanner')
         .controller('AuthController', AuthController);
 
-    AuthController.$inject = ['AuthService'];
+    AuthController.$inject = ['AuthService', '$location'];
 
-    function AuthController(AuthService) {
+    function AuthController(AuthService, $location) {
         var vm = this;
 
         // Constants
@@ -17,7 +17,6 @@
         vm.username = "";
         vm.password = "";
         vm.errors = [];
-        vm.user = undefined;
 
         vm.login = login;
 
@@ -42,9 +41,7 @@
 
             AuthService.authenticate(vm.username, vm.password)
                 .then(function success(user) {
-                    vm.user = user;
-                    alert('User has been logged in');
-                    console.log(user)
+                    $location.path('/home');
                 }, function failure(response) {
                     _handleErrors(response);
                 });

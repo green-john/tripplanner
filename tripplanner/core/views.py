@@ -19,8 +19,8 @@ def favicon():
 
 
 @core_app.errorhandler(404)
-def page_not_found():
-    return render_template('templates/404.html'), 404
+def page_not_found(e):
+    return send_file('templates/404.html'), 404
 
 
 @core_app.route('/trips/', methods=['POST'])
@@ -36,12 +36,12 @@ def create_trip():
             not comment or not user_id or len(request.get_json()) > 5):
         return abort(401)
 
-    if not g.user.is_admin() and g.user.id != user_id:
-        abort(401)
-
     user = User.query.get(user_id)
     if not user:
-        abort(404)
+        return abort(404)
+
+    if not g.user.is_admin() and g.user.id != user_id:
+        return abort(401)
 
     t = Trip(destination, start_date, end_date, comment, user)
     db.session.add(t)
