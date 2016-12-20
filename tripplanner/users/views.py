@@ -26,7 +26,7 @@ def register_user():
     db.session.add(user)
     db.session.commit()
 
-    return jsonify({'username': username}), 201
+    return jsonify({'id': user.id, 'username': username}), 201
 
 
 @user_app.route('/users/<int:_id>/', methods=['GET'])
@@ -82,7 +82,7 @@ def all_users():
     if not is_admin_or_manager(g.user):
         return abort(401)
     users = User.query.all()
-    return jsonify([{'username': u.username} for u in users])
+    return jsonify([{'id': u.id, 'username': u.username} for u in users])
 
 
 @user_app.route('/token/', methods=['POST'])

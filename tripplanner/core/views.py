@@ -1,3 +1,5 @@
+import os
+
 from flask import (Blueprint, request, abort, g, jsonify, send_file,
                    send_from_directory, render_template)
 
@@ -15,7 +17,8 @@ def index_page_redirect_to_angular(**kwargs):
 
 @core_app.route('/favicon.ico')
 def favicon():
-    return send_from_directory('templates/favicon.ico')
+    return send_from_directory(os.path.join('tripplanner', 'static'),
+                               'img/favicon.ico')
 
 
 @core_app.errorhandler(404)

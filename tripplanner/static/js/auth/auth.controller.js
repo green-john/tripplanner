@@ -4,9 +4,9 @@
     angular.module('tripplanner')
         .controller('AuthController', AuthController);
 
-    AuthController.$inject = ['AuthService', '$location'];
+    AuthController.$inject = ['AuthService', '$location', '$scope'];
 
-    function AuthController(AuthService, $location) {
+    function AuthController(AuthService, $location, $scope) {
         var vm = this;
 
         // Constants
@@ -41,6 +41,7 @@
 
             AuthService.authenticate(vm.username, vm.password)
                 .then(function success(user) {
+                    // AuthService.setUser(user);
                     $location.path('/home');
                 }, function failure(response) {
                     _handleErrors(response);
