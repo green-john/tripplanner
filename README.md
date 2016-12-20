@@ -50,18 +50,18 @@ In addition we will support some additional endpoints
 In order to run the tests, first install all the requirements, preferably inside a
 virtualenv.
 
-    `pip install -r requirements.txt`
+    pip install -r requirements.txt
    
 then run the nose command:
 
-    `nose2`
+    nose2
     
 This will run all the tests.
 
 ## Running the experimental server
 First install all the requirements and then run:
 
-    `python manage.py runserver`
+    python manage.py runserver
     
 ## TODO
 - Deploy to a production server
