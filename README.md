@@ -45,3 +45,25 @@ permissions to access this trip.
 - `DELETE /users/<id>`: Delete one trip.
 
 In addition we will support some additional endpoints 
+
+## Running The tests
+In order to run the tests, first install all the requirements, preferably inside a
+virtualenv.
+
+    `pip install -r requirements.txt`
+   
+then run the nose command:
+
+    `nose2`
+    
+This will run all the tests.
+
+## Running the experimental server
+First install all the requirements and then run:
+
+    `python manage.py runserver`
+    
+## TODO
+- Deploy to a production server
+- Write angular tests
+- Make resilient to page reload in the browser.
