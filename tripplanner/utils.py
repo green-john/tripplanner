@@ -4,6 +4,8 @@ Utils for the tripplanner app
 import datetime
 from passlib.apps import custom_app_context
 
+DATE_FORMAT = '%d/%m/%Y'
+
 
 def hash_password(password):
     """
@@ -25,4 +27,22 @@ def verify_password(raw_password, hashed_password):
 
 
 def parse_date(any_date):
-    return datetime.date.today()
+    """
+    Parses the given date in the specified format. If the date
+    is not in the given format, raises an error.
+    :param any_date: the date in the given format
+    :return: the date
+    """
+    try:
+        return datetime.datetime.strptime(any_date, DATE_FORMAT).date()
+    except ValueError:
+        raise
+
+
+def print_date(any_date):
+    """
+    Returns the date in the given formatting
+    :param any_date: the date
+    :return: a string representing the date
+    """
+    return any_date.strftime(DATE_FORMAT)

@@ -91,7 +91,8 @@ def get_token():
     token = g.user.generate_rest_auth_token()
     return jsonify({'username': g.user.username,
                     'token': token.decode('ascii'),
-                    'roles': [r.name for r in g.user.roles]})
+                    'roles': [r.name for r in g.user.roles],
+                    'id': g.user.id})
 
 
 @basic_auth.verify_password

@@ -1,0 +1,46 @@
+<div class='col-xs-offset-1'>
+    <div class="row">
+        <div class="col-xs-3">
+            <h2>List of Trips</h2>
+            <ul>
+                <li ng-repeat="trip in vm.tripList">
+                    <label>{{'Trip to ' + trip.destination + ' in ' + trip.start_date}}.
+                    </label>
+                    <label style="color: blue" ng-show="trip.days_left">
+                        {{trip.days_left}} day(s) left.
+                    </label>
+                    <label style="color: red" ng-show="!trip.days_left">
+                        Overdue.
+                    </label>
+                </li>
+            </ul>
+        </div>
+        <div class="col-xs-3">
+            <h2>Create Trip</h2>
+            <form>
+                <div class="row">
+                    <input type="text" ng-model="vm.destination" placeholder="Destination">
+                </div>
+                <div class="row">
+                    <input type="text" ng-model="vm.start_date" placeholder="Start Date (dd/mm/yyyy)">
+                </div>
+                <div class="row">
+                    <input type="text" ng-model="vm.end_date" placeholder="End Date (dd/mm/yyyy)">
+                </div>
+                <div class="row">
+                    <input type="text" ng-model="vm.comment" placeholder="Comment">
+                </div>
+
+                <div class="row">
+                    <button ng-click="vm.createTrip()">Create User</button>
+                </div>
+            </form>
+
+            <div class="row">
+                <div class="individualError" ng-repeat="error in vm.errors">
+                    {{error}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

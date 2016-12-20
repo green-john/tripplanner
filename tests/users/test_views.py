@@ -9,10 +9,6 @@ from tripplanner.users.models import User, Role
 from tests import utils
 
 
-def decode_data(encoded_data):
-    return encoded_data.decode('UTF-8')
-
-
 class TestUserViews(unittest.TestCase):
 
     def setUp(self):
@@ -33,7 +29,7 @@ class TestUserViews(unittest.TestCase):
                 'last_name': 'Er'}
         response = self.client.post('/users/', data=json.dumps(user),
                                     content_type='application/json')
-        decoded_data = decode_data(response.data)
+        decoded_data = utils.decode_data(response.data)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(json.loads(decoded_data)['username'], user['username'])
 
@@ -56,7 +52,7 @@ class TestUserViews(unittest.TestCase):
         response = self.client.post('/token/', headers={
             'Authorization': auth_header
         })
-        decoded_data = decode_data(response.data)
+        decoded_data = utils.decode_data(response.data)
         self.assertIn('token', json.loads(decoded_data))
 
     def test_get_auth_token_incorrect_credentials(self):
@@ -82,7 +78,7 @@ class TestUserViews(unittest.TestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        users = json.loads(decode_data(response.data))
+        users = json.loads(utils.decode_data(response.data))
         for u in users:
             self.assertIn(u['username'], usernames)
 
@@ -107,7 +103,7 @@ class TestUserViews(unittest.TestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        u_dict = json.loads(decode_data(response.data))
+        u_dict = json.loads(utils.decode_data(response.data))
         self.assertEqual(u_dict['username'], u.username)
 
     def test_get_one_user_other_user(self):

@@ -1,13 +1,17 @@
 import os
 
+import datetime
 from flask import (Blueprint, request, abort, g, jsonify, send_file,
                    send_from_directory, render_template)
 
-from tripplanner import db, token_auth
+from tripplanner import db, token_auth, utils
 from tripplanner.core.models import Trip
 from tripplanner.users.models import User
 
 core_app = Blueprint('core', __name__)
+
+# Error messages
+WRONG_DATE_ERROR_MSG = 'start_date has the wrong format. Must be dd/mm/YYYY'
 
 
 @core_app.route('/')
@@ -46,8 +50,28 @@ def create_trip():
     if not g.user.is_admin() and g.user.id != user_id:
         return abort(401)
 
-    t = Trip(destination, start_date, end_date, comment, user)
-    db.session.add(t)
-    db.session.commit()
+    try:
+        t = Trip(destination, start_date, end_date, comment, user)
+        db.session.add(t)
+        db.session.commit()
+    except ValueError:
+        return jsonify({'errors': [WRONG_DATE_ERROR_MSG]}), 400
 
-    return jsonify({'trip_id': t.id, 'destination': t.destination}), 201
+    return jsonify({'id': t.id, 'destination': t.destination,
+                    'start_date': t.start_date}), 201
+
+
+@core_app.route('/trips/', methods=['GET'])
+@token_auth.login_required
+def get_all_trips():
+    records = sorted(g.user.trips, key=lambda x: x.start_date,
+                     reverse=True)
+    today = datetime.date.today()
+    response = []
+    for r in records:
+        response.append({'id': r.id, 'destination': r.destination,
+                         'start_date': utils.print_date(r.start_date)})
+        if r.start_date > today:
+            response[-1]['days_left'] = (r.start_date - today).days
+
+    return jsonify(response)

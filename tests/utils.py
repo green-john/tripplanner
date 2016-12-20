@@ -2,6 +2,7 @@ import base64
 
 from tripplanner import db
 from tripplanner.users.models import User, Role
+from tripplanner.core.models import Trip
 
 
 def create_user(user='user1', password='pass1', first_name='Us', last_name='Ser'):
@@ -57,3 +58,14 @@ def create_user_manager(username='manager', password='manager'):
     db.session.commit()
 
     return manager_user
+
+
+def decode_data(encoded_data):
+    return encoded_data.decode('UTF-8')
+
+
+def create_and_save_trip(destination, start_date, end_date, comment, user):
+    t = Trip(destination, start_date, end_date, comment, user)
+    db.session.add(t)
+    db.session.commit()
+    return t
