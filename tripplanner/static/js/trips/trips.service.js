@@ -11,7 +11,8 @@
         return {
             createTrip: createTrip,
             getAllTrips: getAllTrips,
-            filterTrips: filterTrips
+            filterTrips: filterTrips,
+            getNextMonthItinerary: getNextMonthItinerary
         };
 
         ////////////////////////////////////////////
@@ -52,6 +53,21 @@
             };
 
             return $http.post('/trips/filter/', JSON.stringify(params), config).then(
+                function success(response) {
+                    return response.data;
+                },
+                function failure(response) {
+                    throw response;
+                }
+            )
+        }
+
+        function getNextMonthItinerary() {
+            var config = {
+                headers: AuthService.getAuthorizationHeader()
+            };
+
+            return $http.get('/trips/next_month/', config).then(
                 function success(response) {
                     return response.data;
                 },

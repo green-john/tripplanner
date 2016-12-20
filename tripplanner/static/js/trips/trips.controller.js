@@ -57,7 +57,12 @@
         }
 
         function getNextMonthItinerary() {
-            var thisMonth = (new Date()).getMonth() + 1;
+            vm.nextMonthItinerary = [];
+            TripService.getNextMonthItinerary().then(function (trips) {
+                vm.nextMonthItinerary = trips;
+            }, function (response) {
+                _handleErrors(response);
+            });
         }
 
         function updateTrip() {

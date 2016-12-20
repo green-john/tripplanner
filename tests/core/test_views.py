@@ -203,7 +203,7 @@ class TestCoreViews(unittest.TestCase):
             today = datetime.date.today().strftime("%d/%m/%Y")
             utils.create_and_save_trip('TEST', today, today, 'TEST', user_admin)
 
-        response = self.client.get('/trips/next_month_trips/', headers=headers)
+        response = self.client.get('/trips/next_month/', headers=headers)
         self.assertEqual(response.status_code, 200)
         data = json.loads(utils.decode_data(response.data))
 

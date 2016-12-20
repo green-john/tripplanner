@@ -105,7 +105,7 @@ def filter_trips():
     return jsonify(response)
 
 
-@core_app.route('/trips/next_month_trips', methods=['GET'])
+@core_app.route('/trips/next_month/', methods=['GET'])
 @token_auth.login_required
 def get_trips_next_month():
     today = datetime.date.today()
