@@ -1,0 +1,9 @@
+<div class="col-xs-offset-3">
+    <p>Welcome {{vm.user.username}}. Here you can manage your things:</p>
+
+    <ul>
+        <li ng-show="vm.isAdmin || vm.isManager"><a href="/users">Manage Users</a></li>
+        <li><a href="/trips">Manage Trips</a></li>
+    </ul>
+
+</div>
