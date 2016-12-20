@@ -1,26 +1,24 @@
 "use strict";
 
-(() => {
+(function() {
     angular.module('tripplanner')
         .config(routeConfig);
 
-    routeConfig.$inject = ['$stateProvider', '$urlRouterProvider'];
+    routeConfig.$inject = ['$routeProvider', '$locationProvider'];
 
-    function routeConfig($stateProvider, $urlRouterProvider) {
-        let loginState = {
-            url: '/login',
+    function routeConfig($routeProvider, $locationProvider) {
+        $routeProvider
+        .when('/', {
+            templateUrl: '/static/js/landing.html'
+        })
+        .when('/login', {
             templateUrl: '/static/js/auth/landing.html',
-            title: 'Login | TripPlanner',
             controller: 'AuthController'
-        };
+        })
+        .otherwise({
+            redirectTo: '/'
+        });
 
-        let notFound = {
-            url: '/404',
-            templateUrl: '/static/js/404.html',
-            title: '404 Not Found | TripPlanner',
-        };
-
-        $stateProvider.state('login', loginState);
-        $stateProvider.state('notFound', notFound);
+        $locationProvider.html5Mode(true);
     }
 })();

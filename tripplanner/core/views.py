@@ -1,5 +1,5 @@
-from flask import Blueprint, request, abort, g, jsonify
-from flask import make_response
+from flask import (Blueprint, request, abort, g, jsonify, send_file,
+                   send_from_directory, render_template)
 
 from tripplanner import db, token_auth
 from tripplanner.core.models import Trip
@@ -10,8 +10,17 @@ core_app = Blueprint('core', __name__)
 
 @core_app.route('/')
 def index_page_redirect_to_angular(**kwargs):
-    with open('tripplanner/templates/index.html') as f:
-        return make_response(f.read())
+    return send_file('templates/index.html')
+
+
+@core_app.route('/favicon.ico')
+def favicon():
+    return send_from_directory('templates/favicon.ico')
+
+
+@core_app.errorhandler(404)
+def page_not_found():
+    return render_template('templates/404.html'), 404
 
 
 @core_app.route('/trips/', methods=['POST'])

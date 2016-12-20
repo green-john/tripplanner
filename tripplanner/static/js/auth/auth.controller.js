@@ -1,13 +1,13 @@
 "use strict";
 
-(() => {
+(function() {
     angular.module('tripplanner')
         .controller('AuthController', AuthController);
 
     AuthController.$inject = ['AuthService'];
 
     function AuthController(AuthService) {
-        let vm = this;
+        var vm = this;
 
         // Constants
 
@@ -24,7 +24,7 @@
         ///////////////////////
 
         function login() {
-            let localErrors = [];
+            var localErrors = [];
             vm.errors = [];
             if (!vm.username) {
                 localErrors.push(vm.EMPTY_USERNAME_ERROR);
@@ -39,17 +39,18 @@
                 return;
             }
 
-            AuthService.authenticate(vm.username, vm.password).then((user) => {
-                vm.user = user;
-            }, (response) => {
-                _handleErrors(response);
-            });
+            AuthService.authenticate(vm.username, vm.password)
+                .then(function success(user) {
+                    vm.user = user;
+                }, function failure(response) {
+                    _handleErrors(response);
+                });
         }
 
         function _handleErrors(response) {
             vm.errors = [];
             if (response.errors) {
-                response.errors.forEach((error) => {
+                response.errors.forEach(function each(error) {
                     vm.errors.push(error);
                 })
             }

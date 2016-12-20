@@ -1,6 +1,6 @@
 'use strict';
 
-(() => {
+(function() {
     angular.module('tripplanner')
         .factory('AuthService', AuthService);
 
@@ -14,16 +14,17 @@
         //////////////////////////
 
         function authenticate(username, password) {
-            let authHeader = SerializerService.encodeBasicAuth(username, password);
-            let config = {
+            var authHeader = SerializerService.encodeBasicAuth(username, password);
+            var config = {
                 headers: {
                     'Authorization': authHeader
                 }
             };
 
-            $http.post('/token/', {}, config).then((response) => {
+            $http.post('/token/', {}, config)
+            .then(function success(response) {
                 return response.data;
-            }, (response) => {
+            }, function failure(response) {
                 throw response;
             });
         }

@@ -1,6 +1,6 @@
+'use strict';
 
-(() => {
-    'use strict';
-    angular.module('tripplanner', ['ui.router'])
+(function() {
+    angular.module('tripplanner', ['ngRoute']);
 })();
 

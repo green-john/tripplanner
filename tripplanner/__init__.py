@@ -19,6 +19,7 @@ def create_app(config_name):
     """
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+    app.url_map.strict_slashes = False
 
     # Imports here to avoid circular imports
     from tripplanner.users.views import user_app

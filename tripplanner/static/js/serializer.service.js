@@ -1,6 +1,6 @@
 "use strict";
 
-(() => {
+(function() {
     angular.module('tripplanner')
         .factory('SerializerService', SerializerService);
 
@@ -13,7 +13,7 @@
         /////////////////////////////
 
         function encodeBasicAuth(username, password) {
-            let userPass = username + ":" + password;
+            var userPass = username + ":" + password;
             userPass = btoa(userPass);
 
             return 'Basic ' + userPass;
