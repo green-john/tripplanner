@@ -39,10 +39,10 @@ method only works for authenticated users.
 - `POST /trips/`: Creates a new trip.
 - `PUT /users/`: _Not supported_
 - `DELETE /users/`: _Not supported_
-- `GET /users/<id>`: Returns the trip with the given id. Makes sure the user has
+- `GET /trips/<id>`: Returns the trip with the given id. Makes sure the user has
 permissions to access this trip.
-- `PUT /users/<id>`: Update one trip.
-- `DELETE /users/<id>`: Delete one trip.
+- `PUT /trips/<id>`: Update one trip.
+- `DELETE /trips/<id>`: Delete one trip.
 
 In addition we will support some additional endpoints 
 
