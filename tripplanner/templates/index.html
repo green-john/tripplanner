@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-<head ng-app="tripplanner">
+<html lang="en" ng-app="tripplanner">
+<head>
     <meta charset="UTF-8">
     <title>Trip Planner</title>
     <base href="/">
@@ -14,12 +14,12 @@
 
 <body>
     <div class="container-fluid">
-        <h1>App</h1>
+        <h1>TripPlanner</h1>
         <div class="row">
-            <ui-view>
-            </ui-view>
+            <div ng-view>
+            </div>
         </div>
-        <a href="/login">Login</a>
+        <a href="login">Login</a>
     </div>
 
     <script src="/static/js/app.module.js"></script>

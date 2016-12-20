@@ -8,9 +8,6 @@
 
     function routeConfig($routeProvider, $locationProvider) {
         $routeProvider
-        .when('/', {
-            templateUrl: '/static/js/landing.html'
-        })
         .when('/login', {
             templateUrl: '/static/js/auth/landing.html',
             controller: 'AuthController'
