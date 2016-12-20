@@ -122,3 +122,66 @@ class TestCoreViews(unittest.TestCase):
         for i in range(3, 6):
             self.assertFalse(data[i].get('days_left'))
             self.assertEqual(data[i]['start_date'], date_order[i])
+
+    def test_filter_trips_by_destination(self):
+        user_admin = utils.create_user_admin()
+        headers = {'Authorization': utils.encode_info_token_http_auth(
+            user_admin.generate_rest_auth_token())}
+        #  Dict used to insert records. Key is the destination, value is how many
+        #  records to insert
+        records_to_insert = {'DEST1': 2, 'DEST2': 3, 'DEST3': 1}
+        for dest, count in records_to_insert.items():
+            for _ in range(count):
+                utils.create_and_save_trip('{}'.format(dest), '1/1/2016',
+                                           '01/02/2016', 'Test trip', user_admin)
+
+        for dest, count in records_to_insert.items():
+            query = {'destination': dest}
+            response = self.client.get('/trips/filter/', data=json.dumps(query),
+                                       headers=headers, content_type='application/json')
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(utils.decode_data(response.data))
+            self.assertEqual(len(data), count)
+
+    def test_filter_trips_by_start_date(self):
+        user_admin = utils.create_user_admin()
+        headers = {'Authorization': utils.encode_info_token_http_auth(
+            user_admin.generate_rest_auth_token())}
+        #  Dict used to insert records. Key is the destination, value is how many
+        #  records to insert
+        records_to_insert = {'01/02/2016': 2, '02/02/2016': 3, '03/02/2016': 1}
+        for start_date, count in records_to_insert.items():
+            for _ in range(count):
+                utils.create_and_save_trip('test dest', '{}'.format(start_date),
+                                           '01/02/2016', 'Test trip', user_admin)
+
+        for start_date, count in records_to_insert.items():
+            query = {'start_date': start_date}
+            response = self.client.get('/trips/filter/', data=json.dumps(query),
+                                       headers=headers, content_type='application/json')
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(utils.decode_data(response.data))
+            self.assertEqual(len(data), count)
+
+    def test_filter_trips_by_end_date(self):
+        user_admin = utils.create_user_admin()
+        headers = {'Authorization': utils.encode_info_token_http_auth(
+            user_admin.generate_rest_auth_token())}
+        #  Dict used to insert records. Key is the destination, value is how many
+        #  records to insert
+        records_to_insert = {'01/02/2016': 2, '02/02/2016': 3, '03/02/2016': 1}
+        for end_date, count in records_to_insert.items():
+            for _ in range(count):
+                utils.create_and_save_trip('test dest', '01/02/2016',
+                                           '{}'.format(end_date), 'Test trip', user_admin)
+
+        for end_date, count in records_to_insert.items():
+            query = {'end_date': end_date}
+            response = self.client.get('/trips/filter/', data=json.dumps(query),
+                                       headers=headers, content_type='application/json')
+
+            self.assertEqual(response.status_code, 200)
+            data = json.loads(utils.decode_data(response.data))
+            self.assertEqual(len(data), count)

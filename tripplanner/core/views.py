@@ -75,3 +75,30 @@ def get_all_trips():
             response[-1]['days_left'] = (r.start_date - today).days
 
     return jsonify(response)
+
+
+@core_app.route('/trips/filter/', methods=['GET'])
+@token_auth.login_required
+def filter_trips():
+    destination = request.get_json().get('destination')
+    start_date = request.get_json().get('start_date')
+    end_date = request.get_json().get('end_date')
+
+    trips = g.user.trips
+    if destination:
+        trips = trips.filter_by(destination=destination)
+
+    if start_date:
+        trips = trips.filter_by(start_date=utils.parse_date(start_date))
+
+    if end_date:
+        trips = trips.filter_by(end_date=utils.parse_date(end_date))
+
+    response = []
+    for t in trips.all():
+        response.append({'id': t.id, 'destination': t.destination,
+                         'start_date': utils.print_date(t.start_date),
+                         'end_date': utils.print_date(t.end_date),
+                         'comment': t.comment})
+
+    return jsonify(response)
