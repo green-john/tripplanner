@@ -28,6 +28,7 @@
         vm.deleteTrip = deleteTrip;
         vm.getAllTrips = getAllTrips;
         vm.filterTrips = filterTrips;
+        vm.getNextMonthItinerary = getNextMonthItinerary;
 
         vm.user = AuthService.getUser();
 
@@ -52,7 +53,7 @@
                     getAllTrips();
                 }, function (response) {
                     _handleErrors(response);
-                })
+                });
             }
         }
 

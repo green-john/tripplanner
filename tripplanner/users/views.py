@@ -49,6 +49,7 @@ def update_user(_id):
     user = User.query.get(_id)
     new_first_name = request.get_json().get('first_name')
     new_last_name = request.get_json().get('last_name')
+    new_username = request.get_json().get('username')
 
     changes = False
     if new_first_name:
@@ -59,11 +60,18 @@ def update_user(_id):
         user.last_name = new_last_name
         changes = True
 
-    if changes:
-        db.session.add(user)
-        db.session.commit()
+    if new_username:
+        user.username = new_username
+        changes = True
 
-    return jsonify({}), 201
+    if changes:
+        try:
+            db.session.add(user)
+            db.session.commit()
+        except:
+            return jsonify({'errors': ['There was a problem updating the user']}), 400
+
+    return jsonify({'id': user.id, 'username': user.username}), 204
 
 
 @user_app.route('/users/<int:_id>/', methods=['DELETE'])

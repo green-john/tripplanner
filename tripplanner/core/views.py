@@ -31,6 +31,23 @@ def page_not_found(e):
     return send_file('templates/404.html'), 404
 
 
+@core_app.route('/all_trips/', methods=['GET'])
+@token_auth.login_required
+def get_all_users():
+    if not g.user.is_admin():
+        return abort(401)
+    trips = Trip.query.all()
+
+    response = []
+    for t in trips:
+        response.append({'id': t.id, 'destination': t.destination,
+                         'start_date': utils.print_date(t.start_date),
+                         'end_date': utils.print_date(t.end_date),
+                         'comment': t.comment})
+
+    return jsonify(response)
+
+
 @core_app.route('/trips/', methods=['POST'])
 @token_auth.login_required
 def create_trip():
@@ -76,6 +93,44 @@ def get_all_trips():
             response[-1]['days_left'] = (r.start_date - today).days
 
     return jsonify(response)
+
+
+@core_app.route('/trips/<_id>/', methods=['PUT'])
+@token_auth.login_required
+def modify_trip(_id):
+    trip = Trip.query.get(_id)
+    if not g.user.is_admin() and trip.user.id != g.user.id:
+        return abort(401)
+
+    new_destination = request.get_json().get('destination')
+    new_start_date = request.get_json().get('start_date')
+    new_end_date = request.get_json().get('end_date')
+    new_comment = request.get_json().get('comment')
+
+    changes = False
+
+    if new_destination:
+        trip.destination = new_destination
+        changes = True
+    if new_start_date:
+        trip.start_date = utils.parse_date(new_start_date)
+        changes = True
+    if new_end_date:
+        trip.end_date = utils.parse_date(new_end_date)
+        changes = True
+    if new_comment:
+        trip.comment = new_comment
+        changes = True
+
+    if changes:
+        db.session.add(trip)
+        db.session.commit()
+        return jsonify({'id': trip.id, 'destination': trip.destination,
+                        'start_date': utils.print_date(trip.start_date),
+                        'end_date': utils.print_date(trip.end_date),
+                        'comment': trip.comment}), 200
+
+    return jsonify({}), 204
 
 
 @core_app.route('/trips/filter/', methods=['POST'])
