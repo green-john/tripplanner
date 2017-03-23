@@ -1,3 +1,9 @@
+## Update 03/23/2017
+This is an old project that I wrote at the end of last year. It was an assignment
+I found to learn Flask. I wrote it in a hurry so I decided to go back to it,
+refactor it, clean it up, and put it out on the interwebs. I hope you may
+find good use to this.
+
 ## Write a simple travel planner
 
 - User must be able to create an account and log in.
