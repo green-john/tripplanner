@@ -63,3 +63,20 @@ class TestUser(unittest.TestCase):
         self.assertIn(Role.admin(), actual_user.roles)
         self.assertIn(Role.regular(), actual_user.roles)  # All have this by default
         self.assertNotIn(Role.manager(), actual_user.roles)
+
+    def test_create_user_from_request(self):
+        # Arrange
+        user_data = {
+            'username': 'test1',
+            'password': 'test',
+            'first_name': 'a',
+            'last_name': 'z'
+        }
+
+        # Act
+        user = User.create_from_json(user_data)
+
+        # Assert
+        self.assertEqual(user.username, 'test1')
+        self.assertEqual(user.first_name, 'a')
+

@@ -65,6 +65,25 @@ class User(db.Model):
         user = User.query.get(data['id'])
         return user
 
+    @staticmethod
+    def create_from_json(json):
+        """
+        Creates a user given a json dict. The dict must contain username,
+        password, first and last name to be a valid user. If any validation
+        fails, a validation error would be thrown.
+        :param json: dict representing a user
+        :return: new user create or error
+        """
+        username = json.get('username')
+        password = json.get('password')
+        first_name = json.get('first_name')
+        last_name = json.get('last_name')
+
+        if not username or not password or not first_name or not last_name:
+            raise ValueError("Users must have username, password, first name and last")
+
+        return User(username, password, first_name, last_name)
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 

@@ -13,21 +13,14 @@ def is_admin_or_manager(user):
 
 @user_app.route('/users/', methods=['POST'])
 def register_user():
-    # TODO: move this to User class, Make it usable for validating anything
-    username = request.get_json().get('username')
-    password = request.get_json().get('password')
-    first_name = request.get_json().get('first_name')
-    last_name = request.get_json().get('last_name')
-
-    if (not username or not password or not first_name or
-            not last_name or len(request.get_json()) > 4):
+    try:
+        user = User.create_from_json(request.get_json())
+    except ValueError:
         abort(400)
 
-    user = User(username, password, first_name, last_name)
     db.session.add(user)
     db.session.commit()
-
-    return jsonify({'id': user.id, 'username': username}), 201
+    return jsonify({'id': user.id, 'username': user.username}), 201
 
 
 @user_app.route('/users/<int:_id>/', methods=['GET'])
