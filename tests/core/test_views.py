@@ -1,5 +1,6 @@
 import datetime
 import unittest
+from unittest import mock
 
 from flask import json
 from nose2.tools import params
@@ -26,15 +27,19 @@ class TestCoreViews(unittest.TestCase):
         self.app_context.pop()
 
     def test_create_trip(self):
+        # Arrange
         user = utils.create_and_save_user()
         trip_dict = {'destination': 'Country1', 'start_date': '01/01/2017',
                      'end_date': '01/02/2017', 'comment': 'Very Nice',
                      'user_id': user.id}
         token = user.generate_rest_auth_token()
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
+
+        # Act
         response = self.client.post('/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
+        # Assert
         self.assertEqual(response.status_code, 201)
         trip = Trip.query.get(json.loads(utils.decode_data(response.data))['id'])
         self.assertEqual(trip.start_date, datetime.date(2017, 1, 1))
@@ -42,22 +47,26 @@ class TestCoreViews(unittest.TestCase):
 
     @params('a/a/b', '-2/3/1234', '32/10/20111', '30/13/2011')
     def test_create_trip_bad_date_format(self, start_date):
+        # Arrange
         user = utils.create_and_save_user()
         trip_dict = {'destination': 'Country1', 'start_date': start_date,
                      'end_date': '10/12/2017', 'comment': 'Very Nice',
                      'user_id': user.id}
         token = user.generate_rest_auth_token()
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
+
+        # Act
         response = self.client.post('/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
-
         data = json.loads(utils.decode_data(response.data))
 
+        # Assert
         self.assertEqual(response.status_code, 400)
         self.assertIn('start_date has the wrong format. Must be dd/mm/YYYY',
                       data['errors'])
 
     def test_create_trip_by_regular_user_on_behalf_of_other_user_fail(self):
+        # Arrange
         user1 = utils.create_and_save_user('u1', 'pu1')
         user2 = utils.create_and_save_user('u2', 'pu2')
         trip_dict = {'destination': 'Country1', 'start_date': '01/01/2017',
@@ -65,12 +74,16 @@ class TestCoreViews(unittest.TestCase):
                      'user_id': user2.id}
         token = user1.generate_rest_auth_token()
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
+
+        # Act
         response = self.client.post('/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
+        # Assert
         self.assertEqual(response.status_code, 401)
 
     def test_create_trip_by_admin_user_on_behalf_of_other_user_success(self):
+        # Arrange
         user1 = utils.create_and_save_user('u1', 'pu1')
         user_admin = utils.create_user_admin('u2', 'pu2')
         trip_dict = {'destination': 'Country1', 'start_date': '01/01/2017',
@@ -78,24 +91,33 @@ class TestCoreViews(unittest.TestCase):
                      'user_id': user1.id}
         token = user_admin.generate_rest_auth_token()
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
+
+        # Act
         response = self.client.post('/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
+        # Assert
         self.assertEqual(response.status_code, 201)
+        # TODO check that the thing made it into the DB
 
     def test_create_trip_non_existent_user_id(self):
+        # Arrange
         user_admin = utils.create_user_admin('u1', 'pu1')
         trip_dict = {'destination': 'Country1', 'start_date': '01/01/2017',
                      'end_date': '01/02/2017', 'comment': 'Very Nice',
                      'user_id': '5'}
         token = user_admin.generate_rest_auth_token()
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
+
+        # Act
         response = self.client.post('/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
+        # Assert
         self.assertEqual(response.status_code, 404)
 
     def test_list_trips_admin_user_future_and_past_trips(self):
+        # Arrange
         user_admin = utils.create_user_admin()
 
         for day in [1, 2, 3]:
@@ -109,12 +131,19 @@ class TestCoreViews(unittest.TestCase):
         headers = {'Authorization': utils.encode_info_token_http_auth(
             user_admin.generate_rest_auth_token())}
 
-        response = self.client.get('/trips/', headers=headers)
-        self.assertEqual(response.status_code, 200)
+        today = datetime.date(2016, 12, 20)
 
+        # Act
+        with mock.patch('datetime.date', utils.MockDate):
+            utils.MockDate.today = classmethod(lambda cls: today)
+            response = self.client.get('/trips/', headers=headers)
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
         date_order = ['03/01/2017', '02/01/2017', '01/01/2017',
                       '03/01/2016', '02/01/2016', '01/01/2016']
         data = json.loads(utils.decode_data(response.data))
+
         for i in range(3):
             self.assertTrue(data[i].get('days_left'))
             self.assertEqual(data[i]['start_date'], date_order[i])
@@ -124,6 +153,7 @@ class TestCoreViews(unittest.TestCase):
             self.assertEqual(data[i]['start_date'], date_order[i])
 
     def test_filter_trips_by_destination(self):
+        # Arrange
         user_admin = utils.create_user_admin()
         headers = {'Authorization': utils.encode_info_token_http_auth(
             user_admin.generate_rest_auth_token())}
@@ -137,14 +167,18 @@ class TestCoreViews(unittest.TestCase):
 
         for dest, count in records_to_insert.items():
             query = {'destination': dest}
+
+            # Act
             response = self.client.post('/trips/filter/', data=json.dumps(query),
                                         headers=headers, content_type='application/json')
 
+            # Assert
             self.assertEqual(response.status_code, 200)
             data = json.loads(utils.decode_data(response.data))
             self.assertEqual(len(data), count)
 
     def test_filter_trips_by_start_date(self):
+        # Arrange
         user_admin = utils.create_user_admin()
         headers = {'Authorization': utils.encode_info_token_http_auth(
             user_admin.generate_rest_auth_token())}
@@ -158,14 +192,18 @@ class TestCoreViews(unittest.TestCase):
 
         for start_date, count in records_to_insert.items():
             query = {'start_date': start_date}
+
+            # Act
             response = self.client.post('/trips/filter/', data=json.dumps(query),
                                         headers=headers, content_type='application/json')
 
+            # Assert
             self.assertEqual(response.status_code, 200)
             data = json.loads(utils.decode_data(response.data))
             self.assertEqual(len(data), count)
 
     def test_filter_trips_by_end_date(self):
+        # Arrange
         user_admin = utils.create_user_admin()
         headers = {'Authorization': utils.encode_info_token_http_auth(
             user_admin.generate_rest_auth_token())}
@@ -179,14 +217,19 @@ class TestCoreViews(unittest.TestCase):
 
         for end_date, count in records_to_insert.items():
             query = {'end_date': end_date}
+
+            # Act
             response = self.client.post('/trips/filter/', data=json.dumps(query),
                                         headers=headers, content_type='application/json')
 
+
+            # Assert
             self.assertEqual(response.status_code, 200)
             data = json.loads(utils.decode_data(response.data))
             self.assertEqual(len(data), count)
 
     def test_get_itinerary_for_next_month(self):
+        # Arrange
         user_admin = utils.create_user_admin()
         headers = {'Authorization': utils.encode_info_token_http_auth(
             user_admin.generate_rest_auth_token())}
@@ -203,9 +246,13 @@ class TestCoreViews(unittest.TestCase):
             today = datetime.date.today().strftime("%d/%m/%Y")
             utils.create_and_save_trip('TEST', today, today, 'TEST', user_admin)
 
+        # Act
         response = self.client.get('/trips/next_month/', headers=headers)
+
+        # Assert
         self.assertEqual(response.status_code, 200)
         data = json.loads(utils.decode_data(response.data))
 
         self.assertEqual(len(data), 5)
+
 

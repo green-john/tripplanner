@@ -1,8 +1,16 @@
 import base64
 
+import datetime
+
 from tripplanner import db
 from tripplanner.users.models import User, Role
 from tripplanner.core.models import Trip
+
+
+class MockDate(datetime.date):
+
+    def __new__(cls, *args, **kwargs):
+        return datetime.date.__new__(cls, *args, **kwargs)
 
 
 def create_user(user='user1', password='pass1', first_name='Us', last_name='Ser'):
@@ -69,3 +77,5 @@ def create_and_save_trip(destination, start_date, end_date, comment, user):
     db.session.add(t)
     db.session.commit()
     return t
+
+
