@@ -1,8 +1,8 @@
 #!/usr/bin/env python
-
+import datetime
 from flask_script import Manager, Shell
 
-from tripplanner import create_app, db
+from tripplanner import create_app, db, utils
 from tripplanner.users.models import User, Role
 from tripplanner.core.models import Trip
 
@@ -43,9 +43,14 @@ def create_users_and_trips():
     manag = User('manager', 'manager', 'Man', 'Ager')
     manag.roles.append(Role.manager())
 
-    t1 = Trip('D1', '12/12/2016', '12/02/2017', 'C1', u1)
-    t2 = Trip('D2', '13/12/2016', '12/01/2017', 'C1', u1)
-    t3 = Trip('D3', '14/12/2016', '12/01/2017', 'C1', u1)
+    today = datetime.date.today()
+    one_day = datetime.timedelta(days=1)
+    one_month = datetime.timedelta(days=30)
+    two_months = one_day + one_month
+
+    t1 = Trip('D1', utils.print_date(today), utils.print_date(today + one_day), 'C1', u1)
+    t2 = Trip('D2', utils.print_date(today + one_day), utils.print_date(today + two_months), 'C1', u1)
+    t3 = Trip('D3', utils.print_date(today - one_month), utils.print_date(today - one_day), 'C1', u1)
 
     db.session.add_all([u1, u2, u3, admin, manag, t1, t2, t3])
     db.session.commit()
