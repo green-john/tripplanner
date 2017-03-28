@@ -13,6 +13,7 @@ def is_admin_or_manager(user):
 
 @user_app.route('/users/', methods=['POST'])
 def register_user():
+    # TODO: move this to User class, Make it usable for validating anything
     username = request.get_json().get('username')
     password = request.get_json().get('password')
     first_name = request.get_json().get('first_name')
@@ -32,6 +33,7 @@ def register_user():
 @user_app.route('/users/<int:_id>/', methods=['GET'])
 @token_auth.login_required
 def get_user(_id):
+    # TODO abstract this into a decorator
     if not is_admin_or_manager(g.user) and g.user.id != _id:
         abort(401)  # Users can only see themselves
     user = User.query.get(_id)
@@ -44,9 +46,12 @@ def get_user(_id):
 @user_app.route('/users/<int:_id>/', methods=['PUT'])
 @token_auth.login_required
 def update_user(_id):
+    # TODO abstract this into a decorator
     if not is_admin_or_manager(g.user) and g.user.id != _id:
         abort(401)  # Users can only update themselves
     user = User.query.get(_id)
+
+    # TODO move this the User class.
     new_first_name = request.get_json().get('first_name')
     new_last_name = request.get_json().get('last_name')
     new_username = request.get_json().get('username')
@@ -77,6 +82,7 @@ def update_user(_id):
 @user_app.route('/users/<int:_id>/', methods=['DELETE'])
 @token_auth.login_required
 def delete_user(_id):
+    # TODO use decorator
     if not is_admin_or_manager(g.user) and g.user.id != _id:
         abort(401)  # Users can only see themselves
     User.query.filter_by(id=_id).delete()
@@ -87,6 +93,7 @@ def delete_user(_id):
 @user_app.route('/users/', methods=['GET'])
 @token_auth.login_required
 def all_users():
+    # TODO use decorator to check for admin/manager
     if not is_admin_or_manager(g.user):
         return abort(401)
     users = User.query.all()

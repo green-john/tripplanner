@@ -34,6 +34,7 @@ def page_not_found(e):
 @core_app.route('/all_trips/', methods=['GET'])
 @token_auth.login_required
 def get_all_users():
+    # TODO: Abstract the only admin into another decorator
     if not g.user.is_admin():
         return abort(401)
     trips = Trip.query.all()
@@ -51,6 +52,7 @@ def get_all_users():
 @core_app.route('/trips/', methods=['POST'])
 @token_auth.login_required
 def create_trip():
+    # TODO: move this to Trip class, catch exception for validation error
     destination = request.get_json().get('destination')
     start_date = request.get_json().get('start_date')
     end_date = request.get_json().get('end_date')
@@ -61,15 +63,19 @@ def create_trip():
             not comment or not user_id or len(request.get_json()) > 5):
         return abort(401)
 
+    # TODO: Move this from here
     user = User.query.get(user_id)
     if not user:
         return abort(404)
 
+    # TODO: Move this from here
     if not g.user.is_admin() and g.user.id != user_id:
         return abort(401)
 
     try:
         t = Trip(destination, start_date, end_date, comment, user)
+
+        # Maybe have an object in charged of talking to DB.
         db.session.add(t)
         db.session.commit()
     except ValueError:
@@ -79,6 +85,7 @@ def create_trip():
                     'start_date': t.start_date}), 201
 
 
+# TODO This should return all trips. Create new endpoint to return future trips.
 @core_app.route('/trips/', methods=['GET'])
 @token_auth.login_required
 def get_all_trips():
@@ -99,9 +106,14 @@ def get_all_trips():
 @token_auth.login_required
 def modify_trip(_id):
     trip = Trip.query.get(_id)
+
+    # TODO move this
     if not g.user.is_admin() and trip.user.id != g.user.id:
         return abort(401)
 
+    # TODO
+    # this validation should be done somewhere else.
+    # Preferably in the same place where we create/validate trips
     new_destination = request.get_json().get('destination')
     new_start_date = request.get_json().get('start_date')
     new_end_date = request.get_json().get('end_date')
@@ -163,6 +175,7 @@ def filter_trips():
 @core_app.route('/trips/next_month/', methods=['GET'])
 @token_auth.login_required
 def get_trips_next_month():
+    # TODO move next month shenanigans to a separate function
     today = datetime.date.today()
     new_year = today.year
     new_month = today.month + 1
@@ -184,3 +197,13 @@ def get_trips_next_month():
                          'comment': t.comment})
 
     return jsonify(response)
+
+"""
+TODO
+
+* Create error page for bad authentication.
+* Do role checking with decorators instead of if/elses
+* For create_trip improve validation. Maybe add a method to the Trip class.
+* Change GET /trips to return all trips and create a new endpoint to return the upcoming trips
+* Abstract check for user editing their own trips into a decorator.
+"""
