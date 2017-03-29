@@ -36,3 +36,6 @@ __pycache__
 # Man and node_modules
 man/
 node_modules/
+
+# Do not ignore js
+!/**/static/lib/
