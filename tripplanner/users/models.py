@@ -4,6 +4,34 @@ from itsdangerous import TimedJSONWebSignatureSerializer, BadSignature, Signatur
 from tripplanner import db, utils
 
 
+class Role(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), unique=True, index=True)
+
+    def __repr__(self):
+        return '<Role {}>'.format(self.name)
+
+    @staticmethod
+    def create_roles():
+        admin_role = Role(name="admin")
+        manager_role = Role(name="manager")
+        regular_role = Role(name="regular")
+
+        db.session.add_all([admin_role, manager_role, regular_role])
+        db.session.commit()
+
+    @staticmethod
+    def admin():
+        return Role.query.filter_by(name='admin').first()
+
+    @staticmethod
+    def manager():
+        return Role.query.filter_by(name='manager').first()
+
+    @staticmethod
+    def regular():
+        return Role.query.filter_by(name='regular').first()
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
@@ -43,6 +71,9 @@ class User(db.Model):
 
     def is_regular(self):
         return Role.regular() in self.roles
+
+    def has_role(self, role: Role):
+        return role in self.roles
 
     @staticmethod
     def get_user_given_rest_token(token):
@@ -86,35 +117,6 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
-
-
-class Role(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), unique=True, index=True)
-
-    def __repr__(self):
-        return '<Role {}>'.format(self.name)
-
-    @staticmethod
-    def create_roles():
-        admin_role = Role(name="admin")
-        manager_role = Role(name="manager")
-        regular_role = Role(name="regular")
-
-        db.session.add_all([admin_role, manager_role, regular_role])
-        db.session.commit()
-
-    @staticmethod
-    def admin():
-        return Role.query.filter_by(name='admin').first()
-
-    @staticmethod
-    def manager():
-        return Role.query.filter_by(name='manager').first()
-
-    @staticmethod
-    def regular():
-        return Role.query.filter_by(name='regular').first()
 
 
 class UserRoles(db.Model):

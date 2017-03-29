@@ -133,6 +133,22 @@ class TestUserViews(unittest.TestCase):
         u_dict = json.loads(utils.decode_data(response.data))
         self.assertEqual(u_dict['username'], u.username)
 
+    def test_get_other_user_with_superuser(self):
+        # Arrange
+        u = utils.create_and_save_user('u1', 'pass_u1')
+        m = utils.create_user_admin()
+        token = m.generate_rest_auth_token()
+
+        # Act
+        response = self.client.get('/users/{}/'.format(u.id), headers={
+            'Authorization': utils.encode_info_token_http_auth(token)
+        })
+
+        # Assert
+        self.assertEqual(response.status_code, 200)
+        u_dict = json.loads(utils.decode_data(response.data))
+        self.assertEqual(u_dict['username'], u.username)
+
     def test_get_one_user_other_user(self):
         # Arrange
         u1 = utils.create_and_save_user('u1', 'pass_u1')
