@@ -2,6 +2,7 @@ from flask import current_app
 from itsdangerous import TimedJSONWebSignatureSerializer, BadSignature, SignatureExpired
 
 from tripplanner import db, utils
+from tripplanner.errors.validation import ValidationError
 
 
 class Role(db.Model):
@@ -31,6 +32,7 @@ class Role(db.Model):
     @staticmethod
     def regular():
         return Role.query.filter_by(name='regular').first()
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -62,6 +64,36 @@ class User(db.Model):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
                                             expires_in=expiration)
         return s.dumps({'id': self.id})
+
+    def update_from_dict(self, new_data):
+        return self.update(new_data.get('username'), new_data.get('first_name'),
+                           new_data.get('last_name'))
+
+    def update(self, username, first_name, last_name):
+        """
+        Updates User's information
+        """
+        changes = False
+        try:
+            new_data = [username, first_name, last_name]
+            curr_data = [self.username, self.first_name, self.last_name]
+            # TODO: Add one more validation for same username as other user
+
+            for idx, _ in enumerate(new_data):
+                n = new_data[idx]
+                o = curr_data[idx]
+                if n and n.strip() and n != o:
+                    changes = True
+                    curr_data[idx] = new_data[idx]
+
+            self.username = curr_data[0]
+            self.first_name = curr_data[1]
+            self.last_name = curr_data[2]
+
+            return changes
+
+        except ValueError as err:
+            raise err
 
     def is_admin(self):
         return Role.admin() in self.roles
@@ -97,6 +129,32 @@ class User(db.Model):
         return user
 
     @staticmethod
+    def validate_fields(username, first_name, last_name):
+        """
+        Validates that the fields are not empty. If any of them are,
+        raises ValueError
+        :param username: 
+        :param first_name: 
+        :param last_name: 
+        :return: 
+        """
+        fields: dict = {"username": username, "first_name": first_name, "last_name": last_name}
+        empties = []
+
+        for fn, fv in fields.items():
+            if not fv or not fv.strip():
+                empties.append(fn)
+
+        if empties:
+            if len(empties) == 1:
+                e_to_print = empties[0]
+            else:
+                e_to_print = "{} and {}".format(", ".join(empties[:-1]),
+                                                empties[-1])
+
+            raise ValidationError(f"{e_to_print} cannot be emtpy.")
+
+    @staticmethod
     def create_from_json(json):
         """
         Creates a user given a json dict. The dict must contain username,
@@ -110,8 +168,13 @@ class User(db.Model):
         first_name = json.get('first_name')
         last_name = json.get('last_name')
 
-        if not username or not password or not first_name or not last_name:
-            raise ValueError("Users must have username, password, first name and last")
+        try:
+            User.validate_fields(username, first_name, last_name)
+        except ValidationError as err:
+            raise err
+
+        if not password.strip():
+            raise ValidationError("Password cannot be empty")
 
         return User(username, password, first_name, last_name)
 
