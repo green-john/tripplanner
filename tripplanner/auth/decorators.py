@@ -38,7 +38,7 @@ def allow_superuser_and_own(f):
     return decorated
 
 
-def allow_superuser(f):
+def allow_superusers_only(f):
     @wraps(f)
     def decorated(*args, **kwargs):
         success = False

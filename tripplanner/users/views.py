@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, g, abort
 
 from tripplanner import db, basic_auth, token_auth
-from tripplanner.auth.decorators import allow_superuser_and_own, allow_superuser
+from tripplanner.auth.decorators import allow_superuser_and_own, allow_superusers_only
 from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
 
@@ -61,7 +61,7 @@ def delete_user(_id):
 
 
 @user_app.route('/users/', methods=['GET'])
-@allow_superuser
+@allow_superusers_only
 def all_users():
     users = User.query.all()
     return jsonify([{'id': u.id, 'username': u.username} for u in users])

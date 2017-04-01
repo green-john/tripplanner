@@ -74,13 +74,15 @@ class User(db.Model):
         """
         changes = False
         try:
+            User.validate_fields(first_name=first_name,
+                                 last_name=last_name)
+
             new_data = [first_name, last_name]
             curr_data = [self.first_name, self.last_name]
-
             for idx, _ in enumerate(new_data):
                 n = new_data[idx]
                 o = curr_data[idx]
-                if n and n.strip() and n != o:
+                if n != o:
                     changes = True
                     curr_data[idx] = new_data[idx]
 
@@ -89,7 +91,7 @@ class User(db.Model):
 
             return changes
 
-        except ValueError as err:
+        except ValidationError as err:
             raise err
 
     def is_admin(self):
@@ -126,16 +128,13 @@ class User(db.Model):
         return user
 
     @staticmethod
-    def validate_fields(username, first_name, last_name):
+    def validate_fields(**kwargs):
         """
         Validates that the fields are not empty. If any of them are,
         raises ValueError
-        :param username: 
-        :param first_name: 
-        :param last_name: 
-        :return: 
         """
-        fields: dict = {"username": username, "first_name": first_name, "last_name": last_name}
+        fields: dict = {"first_name": kwargs['first_name'],
+                        "last_name": kwargs['last_name']}
         empties = []
 
         for fn, fv in fields.items():
@@ -166,7 +165,9 @@ class User(db.Model):
         last_name = json.get('last_name')
 
         try:
-            User.validate_fields(username, first_name, last_name)
+            User.validate_fields(username=username,
+                                 first_name=first_name,
+                                 last_name=last_name)
         except ValidationError as err:
             raise err
 
