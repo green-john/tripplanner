@@ -72,25 +72,12 @@ class User(db.Model):
         """
         Updates User's information. Usernames cannot be updated.
         """
-        changes = False
         try:
             User.validate_fields(first_name=first_name,
                                  last_name=last_name)
 
-            new_data = [first_name, last_name]
-            curr_data = [self.first_name, self.last_name]
-            for idx, _ in enumerate(new_data):
-                n = new_data[idx]
-                o = curr_data[idx]
-                if n != o:
-                    changes = True
-                    curr_data[idx] = new_data[idx]
-
-            self.first_name = curr_data[0]
-            self.last_name = curr_data[1]
-
-            return changes
-
+            self.first_name = first_name
+            self.last_name = last_name
         except ValidationError as err:
             raise err
 

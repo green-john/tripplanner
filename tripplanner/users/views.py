@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, g, abort
 
-from tripplanner import db, basic_auth, token_auth
+from tripplanner import db, basic_auth
 from tripplanner.auth.decorators import allow_superuser_and_own, allow_superusers_only
 from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
@@ -35,19 +35,16 @@ def get_user(_id):
 @user_app.route('/users/<int:_id>/', methods=['PUT'])
 @allow_superuser_and_own
 def update_user(_id):
-    user = User.query.get(_id)
-
     try:
-        changes = user.update_from_dict(request.get_json())
-    except ValidationError:
-        return jsonify({'errors': ['Error validating input data']}), 400
-
-    if changes:
-        try:
-            db.session.add(user)
-            db.session.commit()
-        except:
-            return jsonify({'errors': ['There was a problem updating the user']}), 400
+        user = User.query.get(_id)
+        user.update_from_dict(request.get_json())
+        db.session.add(user)
+        db.session.commit()
+    except ValidationError as err:
+        return jsonify({'errors': [f'Error validating input data: {err}']}), 400
+    except:
+        db.session.rollback()
+        return jsonify({'errors': ['There was a problem updating the user']}), 400
 
     return jsonify({'id': user.id, 'username': user.username}), 204
 
