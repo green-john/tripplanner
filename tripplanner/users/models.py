@@ -66,18 +66,16 @@ class User(db.Model):
         return s.dumps({'id': self.id})
 
     def update_from_dict(self, new_data):
-        return self.update(new_data.get('username'), new_data.get('first_name'),
-                           new_data.get('last_name'))
+        return self.update(new_data.get('first_name'), new_data.get('last_name'))
 
-    def update(self, username, first_name, last_name):
+    def update(self, first_name, last_name):
         """
-        Updates User's information
+        Updates User's information. Usernames cannot be updated.
         """
         changes = False
         try:
-            new_data = [username, first_name, last_name]
-            curr_data = [self.username, self.first_name, self.last_name]
-            # TODO: Add one more validation for same username as other user
+            new_data = [first_name, last_name]
+            curr_data = [self.first_name, self.last_name]
 
             for idx, _ in enumerate(new_data):
                 n = new_data[idx]
@@ -86,9 +84,8 @@ class User(db.Model):
                     changes = True
                     curr_data[idx] = new_data[idx]
 
-            self.username = curr_data[0]
-            self.first_name = curr_data[1]
-            self.last_name = curr_data[2]
+            self.first_name = curr_data[0]
+            self.last_name = curr_data[1]
 
             return changes
 
