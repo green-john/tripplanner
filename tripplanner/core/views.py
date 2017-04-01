@@ -6,7 +6,9 @@ from flask import (Blueprint, request, abort, g, jsonify, send_file,
                    send_from_directory)
 
 from tripplanner import db, token_auth, utils
+from tripplanner.auth.decorators import allow_superusers_only, allow_superuser_and_owner
 from tripplanner.core.models import Trip
+from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
 
 core_app = Blueprint('core', __name__)
@@ -32,11 +34,8 @@ def page_not_found(e):
 
 
 @core_app.route('/all_trips/', methods=['GET'])
-@token_auth.login_required
-def get_all_users():
-    # TODO: Abstract the only admin into another decorator
-    if not g.user.is_admin():
-        return abort(401)
+@allow_superusers_only
+def get_all_trips():
     trips = Trip.query.all()
 
     response = []
@@ -52,43 +51,30 @@ def get_all_users():
 @core_app.route('/trips/', methods=['POST'])
 @token_auth.login_required
 def create_trip():
-    # TODO: move this to Trip class, catch exception for validation error
-    destination = request.get_json().get('destination')
-    start_date = request.get_json().get('start_date')
-    end_date = request.get_json().get('end_date')
-    comment = request.get_json().get('comment')
     user_id = request.get_json().get('user_id')
-
-    if (not destination or not start_date or not end_date or
-            not comment or not user_id or len(request.get_json()) > 5):
-        return abort(401)
-
-    # TODO: Move this from here
     user = User.query.get(user_id)
     if not user:
         return abort(404)
 
-    # TODO: Move this from here
     if not g.user.is_admin() and g.user.id != user_id:
         return abort(401)
 
     try:
-        t = Trip(destination, start_date, end_date, comment, user)
+        t = Trip.create_from_dict(request.get_json(), user)
 
         # Maybe have an object in charged of talking to DB.
         db.session.add(t)
         db.session.commit()
-    except ValueError:
-        return jsonify({'errors': [WRONG_DATE_ERROR_MSG]}), 400
+    except ValidationError as err:
+        return jsonify({'error': err.get_error_message()}), 400
 
     return jsonify({'id': t.id, 'destination': t.destination,
                     'start_date': t.start_date}), 201
 
 
-# TODO This should return all trips. Create new endpoint to return future trips.
 @core_app.route('/trips/', methods=['GET'])
 @token_auth.login_required
-def get_all_trips():
+def get_all_user_trips():
     records = sorted(g.user.trips, key=lambda x: x.start_date,
                      reverse=True)
     today = datetime.date.today()
@@ -106,43 +92,22 @@ def get_all_trips():
 @token_auth.login_required
 def modify_trip(_id):
     trip = Trip.query.get(_id)
-
-    # TODO move this
     if not g.user.is_admin() and trip.user.id != g.user.id:
         return abort(401)
 
-    # TODO
-    # this validation should be done somewhere else.
-    # Preferably in the same place where we create/validate trips
-    new_destination = request.get_json().get('destination')
-    new_start_date = request.get_json().get('start_date')
-    new_end_date = request.get_json().get('end_date')
-    new_comment = request.get_json().get('comment')
-
-    changes = False
-
-    if new_destination:
-        trip.destination = new_destination
-        changes = True
-    if new_start_date:
-        trip.start_date = utils.parse_date(new_start_date)
-        changes = True
-    if new_end_date:
-        trip.end_date = utils.parse_date(new_end_date)
-        changes = True
-    if new_comment:
-        trip.comment = new_comment
-        changes = True
-
-    if changes:
+    try:
+        trip.update_from_dict(request.get_json())
         db.session.add(trip)
         db.session.commit()
         return jsonify({'id': trip.id, 'destination': trip.destination,
                         'start_date': utils.print_date(trip.start_date),
                         'end_date': utils.print_date(trip.end_date),
-                        'comment': trip.comment}), 200
-
-    return jsonify({}), 204
+                        'comment': trip.comment}), 204
+    except ValidationError as err:
+        return jsonify({'error': [f'Error validating input data: {err.get_error_message()}']}), 400
+    except:
+        db.session.rollback()
+        return jsonify({'error': ['There was a problem updating the user']}), 400
 
 
 @core_app.route('/trips/filter/', methods=['POST'])
@@ -175,17 +140,9 @@ def filter_trips():
 @core_app.route('/trips/next_month/', methods=['GET'])
 @token_auth.login_required
 def get_trips_next_month():
-    # TODO move next month shenanigans to a separate function
     today = datetime.date.today()
-    new_year = today.year
-    new_month = today.month + 1
-    if new_month == 13:
-        new_year += 1
-        new_month = 1
-
-    days_in_month = calendar.monthrange(new_year, new_month)[1]
-    beg_next_month = datetime.date(new_year, new_month, 1)
-    end_next_month = datetime.date(new_year, new_month, days_in_month)
+    beg_next_month = utils.get_first_day_next_month(today)
+    end_next_month = utils.get_last_day_of_month(beg_next_month)
 
     trips = g.user.trips.filter(Trip.start_date.between(beg_next_month, end_next_month))
 

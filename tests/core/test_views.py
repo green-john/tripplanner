@@ -10,6 +10,8 @@ from tripplanner import create_app, db
 from tripplanner.users.models import Role
 from tripplanner.core.models import Trip
 
+from tripplanner import utils as tp_utils
+
 
 class TestCoreViews(unittest.TestCase):
 
@@ -62,8 +64,7 @@ class TestCoreViews(unittest.TestCase):
 
         # Assert
         self.assertEqual(response.status_code, 400)
-        self.assertIn('start_date has the wrong format. Must be dd/mm/YYYY',
-                      data['errors'])
+        self.assertIn(f"time data '{start_date}' does not match format '{tp_utils.DATE_FORMAT}'", data['error'])
 
     def test_create_trip_by_regular_user_on_behalf_of_other_user_fail(self):
         # Arrange
@@ -188,7 +189,7 @@ class TestCoreViews(unittest.TestCase):
         for start_date, count in records_to_insert.items():
             for _ in range(count):
                 utils.create_and_save_trip('test dest', '{}'.format(start_date),
-                                           '01/02/2016', 'Test trip', user_admin)
+                                           '04/02/2016', 'Test trip', user_admin)
 
         for start_date, count in records_to_insert.items():
             query = {'start_date': start_date}
