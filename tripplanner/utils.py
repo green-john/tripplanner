@@ -1,6 +1,7 @@
 """
 Utils for the tripplanner app
 """
+import calendar
 import datetime
 from passlib.apps import custom_app_context
 
@@ -46,3 +47,25 @@ def print_date(any_date):
     :return: a string representing the date
     """
     return any_date.strftime(DATE_FORMAT)
+
+
+def get_first_day_next_month(day):
+
+    """
+    Returns the next month given the current day
+    :param day: 
+    :return: 
+    """
+    last_day = calendar.monthrange(day.year, day.month)[1]
+    one_day = datetime.timedelta(days=1)
+
+    return datetime.date(day.year, day.month, last_day) + one_day
+
+
+def get_last_day_of_month(day):
+    """
+    Given a day returns a day of the last day of the same month
+    """
+    last_day = calendar.monthrange(day.year, day.month)[1]
+    return datetime.date(day.year, day.month, last_day)
+

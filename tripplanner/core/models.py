@@ -1,4 +1,5 @@
 from tripplanner import db, utils
+from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
 
 
@@ -14,12 +15,12 @@ class Trip(db.Model):
 
     def __init__(self, destination, start_date, end_date, comment, user):
         """
-        Creates a new trip. `user_id` must be a valid ID in the DB.
-
+        Creates a new trip given its data. Assumes the given data is correct
+        and has already been validated.
         """
         self.destination = destination
-        self.start_date = utils.parse_date(start_date)
-        self.end_date = utils.parse_date(end_date)
+        self.start_date = start_date
+        self.end_date = end_date
         self.comment = comment
         self.user = user
 
@@ -27,3 +28,54 @@ class Trip(db.Model):
         return '<Trip destination:{} start:{} end:{}>'.format(self.destination,
                                                               self.start_date,
                                                               self.end_date)
+
+    def update_from_dict(self, d):
+        self.update(d.get('destination'), d.get('start_date'),
+                    d.get('end_date'), d.get('comment'))
+
+    def update(self, destination, start_date, end_date, comment):
+        try:
+            start_date, end_date = Trip.validate_data(destination, start_date, end_date)
+            self.destination = destination
+            self.start_date = start_date
+            self.end_date = end_date
+            self.comment = comment
+        except ValidationError as err:
+            raise err
+
+    @staticmethod
+    def create_from_dict(d, user):
+        destination = d.get('destination')
+        start_date = d.get('start_date')
+        end_date = d.get('end_date')
+        comment = d.get('comment')
+
+        try:
+            start_date, end_date = Trip.validate_data(destination, start_date, end_date)
+            return Trip(destination, start_date, end_date, comment, user)
+        except ValidationError as err:
+            raise err
+
+    @staticmethod
+    def validate_data(destination, start_date, end_date):
+        """
+        Validates the date is correct. Raises ValidationError if:
+            destination is empty or
+            start_date or end_date have wrong format
+            start_date >= end_date
+            
+        returns the parsed dates
+        """
+        if not destination or not destination.strip():
+            raise ValidationError("Destination cannot be empty")
+
+        try:
+            start_date = utils.parse_date(start_date)
+            end_date = utils.parse_date(end_date)
+        except ValueError as err:
+            raise ValidationError(err)
+
+        if start_date >= end_date:
+            raise ValidationError("Start date must be before end date")
+
+        return start_date, end_date
