@@ -6,7 +6,7 @@ from flask import (Blueprint, request, abort, g, jsonify, send_file,
                    send_from_directory)
 
 from tripplanner import db, token_auth, utils
-from tripplanner.auth.decorators import allow_superusers_only, allow_superuser_and_own
+from tripplanner.auth.decorators import allow_superusers_only, allow_superuser_and_owner
 from tripplanner.core.models import Trip
 from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
@@ -49,7 +49,7 @@ def get_all_trips():
 
 
 @core_app.route('/trips/', methods=['POST'])
-@allow_superuser_and_own
+@allow_superuser_and_owner
 def create_trip():
     user_id = request.get_json().get('user_id')
     user = User.query.get(user_id)
@@ -86,7 +86,7 @@ def get_all_user_trips():
 
 
 @core_app.route('/trips/<_id>/', methods=['PUT'])
-@allow_superuser_and_own
+@allow_superuser_and_owner
 def modify_trip(_id):
     trip = Trip.query.get(_id)
 

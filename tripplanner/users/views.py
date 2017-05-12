@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify, g, abort
 
 from tripplanner import db, basic_auth
-from tripplanner.auth.decorators import allow_superuser_and_own, allow_superusers_only
+from tripplanner.auth.decorators import allow_superuser_and_owner, allow_superusers_only
 from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
 
@@ -23,7 +23,7 @@ def register_user():
 
 
 @user_app.route('/users/<int:_id>/', methods=['GET'])
-@allow_superuser_and_own
+@allow_superuser_and_owner
 def get_user(_id):
     user = User.query.get(_id)
     if not user:
@@ -33,7 +33,7 @@ def get_user(_id):
 
 
 @user_app.route('/users/<int:_id>/', methods=['PUT'])
-@allow_superuser_and_own
+@allow_superuser_and_owner
 def update_user(_id):
     try:
         user = User.query.get(_id)
@@ -50,7 +50,7 @@ def update_user(_id):
 
 
 @user_app.route('/users/<int:_id>/', methods=['DELETE'])
-@allow_superuser_and_own
+@allow_superuser_and_owner
 def delete_user(_id):
     User.query.filter_by(id=_id).delete()
 

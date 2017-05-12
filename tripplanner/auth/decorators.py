@@ -1,28 +1,24 @@
 from functools import wraps
 
-from flask import g
+from flask import request, g
 from flask_restful import abort
-from typing import List
 
 from tripplanner import token_auth
 from tripplanner.auth import ACCESS_DENIED_MSG
 from tripplanner.users.models import Role, User
 
 
-def allow_superuser_and_own(f):
+def allow_superuser_and_owner(f):
     """
     Requires the user stored in the session to have any of the roles
     in `roles`. If the user does not have any of the roles, the
     request is aborted and a 401 is sent to the client.
-    :param f: 
-    :param roles: 
-    :return: 
     """
     @wraps(f)
     def decorated(*args, **kwargs):
         success = False
 
-        def login(*args, **kwargs):
+        def login():
             nonlocal success
             success = True
 
