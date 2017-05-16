@@ -56,7 +56,7 @@ def create_trip():
     if not user:
         return abort(404)
 
-    if not g.user.is_admin() and g.user.id != user_id:
+    if not _is_authorised(user_id):
         return abort(401)
 
     try:
@@ -92,7 +92,7 @@ def get_all_user_trips():
 @token_auth.login_required
 def modify_trip(_id):
     trip = Trip.query.get(_id)
-    if not g.user.is_admin() and trip.user.id != g.user.id:
+    if not _is_authorised(trip.user.id):
         return abort(401)
 
     try:
@@ -152,8 +152,12 @@ def get_trips_next_month():
                          'start_date': utils.print_date(t.start_date),
                          'end_date': utils.print_date(t.end_date),
                          'comment': t.comment})
-
     return jsonify(response)
+
+
+def _is_authorised(user_id: str):
+    return g.user.is_admin() or g.user.id == user_id
+
 
 """
 TODO
