@@ -39,11 +39,11 @@ def allow_superusers_only(f):
     def decorated(*args, **kwargs):
         success = False
 
-        def login(*args, **kwargs):
+        def login():
             nonlocal success
             success = True
 
-        token_auth.login_required(login)(*args, **kwargs)
+        token_auth.login_required(login)()
         if success:
             user: User = g.user
             if user.has_role(Role.manager()) or user.has_role(Role.admin()):

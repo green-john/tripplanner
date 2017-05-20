@@ -23,8 +23,7 @@
         //////////////////////////
 
         function authenticate(username, password) {
-            var authHeader = SerializerService.encodeCredentialsBasicAuth(
-                username, password);
+            var authHeader = SerializerService.encodeCredentialsForBasicAuth(username, password);
 
             var config = {
                 headers: {
@@ -32,15 +31,18 @@
                 }
             };
 
-            return $http.post('/token/', {}, config)
-            .then(function success(response) {
-                userInfo = response.data;
-                console.log(userInfo);
-                loggedIn = true;
-                return response.data;
-            }, function failure(response) {
-                throw response;
-            });
+            return $http.post('/token/', {}, config).then(
+                function success(response) {
+                    userInfo = response.data;
+                    console.log(userInfo);
+                    loggedIn = true;
+                    return response.data;
+                },
+                function failure(response) {
+                    console.log(response);
+                    throw response;
+                }
+            );
         }
 
         function userLoggedIn() {

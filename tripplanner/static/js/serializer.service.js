@@ -6,7 +6,7 @@
 
     function SerializerService() {
         return {
-            encodeCredentialsBasicAuth: encodeBasicAuth,
+            encodeCredentialsForBasicAuth: encodeBasicAuth,
             encodeCredentialsTokenAuth: encodeTokenAuth
         };
 

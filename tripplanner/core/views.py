@@ -18,8 +18,8 @@ WRONG_DATE_ERROR_MSG = 'start_date has the wrong format. Must be dd/mm/YYYY'
 
 
 @core_app.route('/')
-def index_page_redirect_to_angular(**kwargs):
-    return send_file('templates/index.html')
+def index_page_redirect_to_angular():
+    return send_file('static/templates/index.html')
 
 
 @core_app.route('/favicon.ico')
@@ -30,7 +30,7 @@ def favicon():
 
 @core_app.errorhandler(404)
 def page_not_found(e):
-    return send_file('templates/404.html'), 404
+    return send_file('static/templates/404.html'), 404
 
 
 @core_app.route('/all_trips/', methods=['GET'])
@@ -75,11 +75,10 @@ def create_trip():
 @core_app.route('/trips/', methods=['GET'])
 @token_auth.login_required
 def get_all_user_trips():
-    records = sorted(g.user.trips, key=lambda x: x.start_date,
-                     reverse=True)
+    user_trips = sorted(g.user.trips, key=lambda x: x.start_date, reverse=True)
     today = datetime.date.today()
     response = []
-    for r in records:
+    for r in user_trips:
         response.append({'id': r.id, 'destination': r.destination,
                          'start_date': utils.print_date(r.start_date)})
         if r.start_date > today:

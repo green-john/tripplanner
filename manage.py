@@ -40,8 +40,8 @@ def create_users_and_trips():
 
     admin = User('admin', 'admin', 'Ad', 'Min')
     admin.roles.append(Role.admin())
-    manag = User('manager', 'manager', 'Man', 'Ager')
-    manag.roles.append(Role.manager())
+    user_manager = User('manager', 'manager', 'Man', 'Ager')
+    user_manager.roles.append(Role.manager())
 
     today = datetime.date.today()
     one_day = datetime.timedelta(days=1)
@@ -52,7 +52,7 @@ def create_users_and_trips():
     t2 = Trip('D2', utils.print_date(today + one_day), utils.print_date(today + two_months), 'C1', u1)
     t3 = Trip('D3', utils.print_date(today - one_month), utils.print_date(today - one_day), 'C1', u1)
 
-    db.session.add_all([u1, u2, u3, admin, manag, t1, t2, t3])
+    db.session.add_all([u1, u2, u3, admin, user_manager, t1, t2, t3])
     db.session.commit()
 
 if __name__ == '__main__':

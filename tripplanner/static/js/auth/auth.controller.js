@@ -40,8 +40,7 @@
             }
 
             AuthService.authenticate(vm.username, vm.password)
-                .then(function success(user) {
-                    // AuthService.setUser(user);
+                .then(function success() {
                     $location.path('/home');
                 }, function failure(response) {
                     _handleErrors(response);
