@@ -17,7 +17,7 @@
             controllerAs: 'vm'
         })
         .when('/login', {
-            templateUrl: '/static/js/auth/landing.html',
+            templateUrl: '/static/js/login/login.html',
             controller: 'AuthController',
             controllerAs: 'vm'
         })

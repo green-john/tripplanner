@@ -99,7 +99,7 @@ class User(db.Model):
         Returns the user given its encrypted token, otherwise
         raises an error indicating the token is invalid or
         has expired
-        :param token: encrypted auth token with user id
+        :param token: encrypted login token with user id
         :param expiration: time for which the token is valid
         :return: user with the decrypted id or None if token is invalid
         """

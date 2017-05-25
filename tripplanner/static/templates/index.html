@@ -1,37 +1,26 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="tripplanner">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Trip Planner</title>
-    <base href="/">
 
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/grid12.css">
-
-    <script type="text/javascript" src="/static/lib/angular/angular.js"></script>
-    <script type="text/javascript" src="/static/lib/angular/angular-route.js"></script>
 </head>
 
-<body>
-    <div class="container-fluid">
-        <h1><a href="/">TripPlanner</a></h1>
-        <div ng-view>
-        </div>
+<body aurelia-app="/static/js/main">
+
+    <div id="main_panel">
+
     </div>
 
-    <script src="/static/js/app.module.js"></script>
-    <script src="/static/js/app.run.js"></script>
-    <script src="/static/js/app.route.js"></script>
-    <script src="/static/js/serializer.service.js"></script>
-    <script src="/static/js/home.controller.js"></script>
+    <script src="/static/lib/aurelia/system.js"></script>
+    <script src="/static/lib/aurelia/config_systemjs.js"></script>
+    <script src="/static/lib/aurelia/aurelia-core.min.js"></script>
+    <script src="/static/lib/aurelia/aurelia-routing.min.js"></script>
 
-    <script src="/static/js/auth/auth.service.js"></script>
-    <script src="/static/js/auth/auth.controller.js"></script>
-
-    <script src="/static/js/user/user.service.js"></script>
-    <script src="/static/js/user/user.controller.js"></script>
-
-    <script src="/static/js/trips/trips.service.js"></script>
-    <script src="/static/js/trips/trips.controller.js"></script>
+    <script>
+        System.import('aurelia-bootstrapper');
+    </script>
 </body>
 </html>
