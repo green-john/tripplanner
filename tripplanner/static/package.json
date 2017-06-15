@@ -1,0 +1,7 @@
+{
+  "name": "TripPlanner",
+  "dependencies": {
+    "aurelia-fetch-client": "^1.1.2",
+    "aurelia-framework": "^1.1.2"
+  }
+}
