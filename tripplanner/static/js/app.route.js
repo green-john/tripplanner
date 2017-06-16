@@ -12,7 +12,7 @@
             templateUrl: '/static/js/landing.html'
         })
         .when('/home', {
-            templateUrl: '/static/js/home.html',
+            templateUrl: '/static/js/home/home.html',
             controller: 'HomeController',
             controllerAs: 'vm'
         })

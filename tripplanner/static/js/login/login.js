@@ -1,21 +1,35 @@
+import { inject } from 'aurelia-framework';
+import { LoginService } from 'login/login.service';
 
+@inject(LoginService)
 export class LoginController {
-    constructor() {
+    constructor(loginService) {
         this.EMPTY_USERNAME_ERROR = 'Username must be non-empty';
         this.EMPTY_PASSWORD_ERROR = 'Password must be non-empty';
 
         this.username = '';
         this.password = '';
         this.errors = [];
+
+        this.$login = loginService;
     }
 
     login() {
         let localErrors = this._validateForm();
         if (localErrors.length > 0) {
             this.errors = localErrors;
-        } else {
-
+            return;
         }
+
+        this.$login.authenticate(this.username, this.password)
+            .then((user) => {
+                // Redirect to home
+            })
+            .catch((error) => {
+                console.log(error);
+            });
+
+
     }
 
     _validateForm() {
