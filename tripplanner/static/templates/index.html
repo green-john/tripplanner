@@ -6,21 +6,15 @@
 
     <link rel="stylesheet" href="/static/css/main.css">
     <link rel="stylesheet" href="/static/css/grid12.css">
+
+    <base href="/">
 </head>
 
-<body aurelia-app="/static/js/main">
-
-    <div id="main_panel">
+<body >
+    <div id="main_panel" aurelia-app="main">
 
     </div>
 
-    <script src="/static/lib/aurelia/system.js"></script>
-    <script src="/static/lib/aurelia/config_systemjs.js"></script>
-    <script src="/static/lib/aurelia/aurelia-core.min.js"></script>
-    <script src="/static/lib/aurelia/aurelia-routing.min.js"></script>
-
-    <script>
-        System.import('aurelia-bootstrapper');
-    </script>
+    <script src="/static/js/dist/bundle.js"></script>
 </body>
 </html>

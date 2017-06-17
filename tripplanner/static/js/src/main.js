@@ -1,17 +1,17 @@
-import * as axios from 'https://unpkg.com/axios/dist/axios.min.js';
+import { PLATFORM } from 'aurelia-pal';
+import * as axios from 'axios';
 
 export function configure(aurelia) {
     "use strict";
     const ROOT_ELEMENT_ID = 'main_panel';
-    const ENTRY_POINT = 'static/js/router';
+    const ENTRY_POINT = PLATFORM.moduleName('router');
 
     // Register libraries for use with Aurelia's DI
     let container = aurelia.container;
     container.registerInstance('axios', axios);
 
-    aurelia.use.basicConfiguration();
+    aurelia.use.standardConfiguration()
+        .developmentLogging();
     aurelia.start()
         .then(() => aurelia.setRoot(ENTRY_POINT, document.getElementById(ROOT_ELEMENT_ID)));
-
-    console.log("asdf");
 }

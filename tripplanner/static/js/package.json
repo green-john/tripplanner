@@ -1,0 +1,16 @@
+{
+  "name": "TripPlanner",
+  "dependencies": {
+    "aurelia-bootstrapper": "^2.1.1",
+    "aurelia-framework": "^1.1.2",
+    "aurelia-polyfills": "^1.2.1",
+    "axios": "^0.16.2"
+  },
+  "devDependencies": {
+    "aurelia-webpack-plugin": "^2.0.0-rc.2",
+    "webpack": "^2.6.1"
+  },
+  "scripts": {
+    "build": "webpack"
+  }
+}

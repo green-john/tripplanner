@@ -1,13 +1,15 @@
 import { SerializerService } from 'utils/serializer.service';
-import { inject } from 'aurelia-framework';
 
-@inject(SerializerService, 'axios')
 export class LoginService {
     constructor(serializerService, httpService) {
         this.$serializer = serializerService;
         this.$http = httpService;
         this.userLoggedIn = false;
         this.userInfo = null;
+    }
+
+    static inject() {
+        return [SerializerService, 'axios']
     }
 
     authenticate(username, password) {

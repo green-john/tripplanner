@@ -1,7 +1,5 @@
-import { inject } from 'aurelia-framework';
 import { LoginService } from 'login/login.service';
 
-@inject(LoginService)
 export class LoginController {
     constructor(loginService) {
         this.EMPTY_USERNAME_ERROR = 'Username must be non-empty';
@@ -12,6 +10,10 @@ export class LoginController {
         this.errors = [];
 
         this.$login = loginService;
+    }
+
+    static inject() {
+        return [LoginService]
     }
 
     login() {
