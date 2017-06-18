@@ -25,7 +25,7 @@ export class LoginService {
             this.userLoggedIn = true;
             return this.userInfo;
         }).catch(error => {
-            _handleErrors(error);
+            this._handleErrors(error);
         });
     }
 

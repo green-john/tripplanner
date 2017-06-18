@@ -11,7 +11,9 @@ export function configure(aurelia) {
     container.registerInstance('axios', axios);
 
     aurelia.use.standardConfiguration()
-        .developmentLogging();
+        .developmentLogging()
+        .plugin(PLATFORM.moduleName('aurelia-dialog'));
+
     aurelia.start()
         .then(() => aurelia.setRoot(ENTRY_POINT, document.getElementById(ROOT_ELEMENT_ID)));
 }

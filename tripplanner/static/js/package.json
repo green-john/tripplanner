@@ -2,6 +2,7 @@
   "name": "TripPlanner",
   "dependencies": {
     "aurelia-bootstrapper": "^2.1.1",
+    "aurelia-dialog": "^1.0.0-rc.1.0.3",
     "aurelia-framework": "^1.1.2",
     "aurelia-polyfills": "^1.2.1",
     "axios": "^0.16.2"

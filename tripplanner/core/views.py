@@ -17,8 +17,9 @@ core_app = Blueprint('core', __name__)
 WRONG_DATE_ERROR_MSG = 'start_date has the wrong format. Must be dd/mm/YYYY'
 
 
-@core_app.route('/')
-def index_page_redirect_to_angular():
+@core_app.route('/', defaults={'path': ''})
+@core_app.route('/<path:path>')
+def catch_all(path):
     return send_file('static/templates/index.html')
 
 

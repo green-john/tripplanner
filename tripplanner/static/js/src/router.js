@@ -14,7 +14,5 @@ export class Router {
             {route: 'users', moduleId: ('users/users'), title: 'Users', name: 'users'},
             {route: 'trips', moduleId: ('trips/trips'), title: 'Trips', name: 'trips'},
         ]);
-
-        console.log("done");
     }
 }

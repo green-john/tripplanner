@@ -1,7 +1,12 @@
 import { LoginService } from 'login/login.service';
+import { DialogController } from 'aurelia-dialog';
 
 export class LoginController {
-    constructor(loginService) {
+    static inject() {
+        return [LoginService, DialogController];
+    }
+
+    constructor(loginService, dialogController) {
         this.EMPTY_USERNAME_ERROR = 'Username must be non-empty';
         this.EMPTY_PASSWORD_ERROR = 'Password must be non-empty';
 
@@ -10,10 +15,7 @@ export class LoginController {
         this.errors = [];
 
         this.$login = loginService;
-    }
-
-    static inject() {
-        return [LoginService]
+        this.dialogCtrl = dialogController;
     }
 
     login() {
@@ -25,13 +27,14 @@ export class LoginController {
 
         this.$login.authenticate(this.username, this.password)
             .then((user) => {
+                this.dialogCtrl.ok(user);
                 // Redirect to home
             })
             .catch((error) => {
+                this.errors = [error];
+                this.dialogCtrl.ok(null);
                 console.log(error);
             });
-
-
     }
 
     _validateForm() {

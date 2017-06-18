@@ -1,20 +1,27 @@
 <template>
-    <form>
-        <div class="col-xs-offset-3 col-xs-6">
-            <div class="row">
-                <input type="text" value.bind="username" placeholder="username">
-            </div>
-            <div class="row">
-                <input type="password" value.bind="password" placeholder="password">
-            </div>
-            <div class="row">
-                <button type="submit" click.trigger="login()">Login</button>
-            </div>
-            <div class="row">
-                <div class="individualError" repeat.for="error of errors">
-                    {{error}}
+    <ux-dialog>
+        <ux-dialog-body>
+            <h2>Log In compadre!</h2>
+            <form>
+                <div class="col-xs-offset-3 col-xs-6">
+                    <div class="row">
+                        <input type="text" value.bind="username" placeholder="username">
+                    </div>
+                    <div class="row">
+                        <input type="password" value.bind="password" placeholder="password">
+                    </div>
+                    <div class="row">
+                        <div class="individualError" repeat.for="error of errors">
+                            {{error}}
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </form>
+            </form>
+        </ux-dialog-body>
+
+        <ux-dialog-footer>
+            <button click.trigger="dialogCtrl.cancel()">Cancel</button>
+            <button click.trigger="login()">Ok</button>
+        </ux-dialog-footer>
+    </ux-dialog>
 </template>
