@@ -1,12 +1,13 @@
 import { LoginService } from 'login/login.service';
 import { DialogController } from 'aurelia-dialog';
+import { Router } from 'aurelia-router';
 
 export class LoginController {
     static inject() {
-        return [LoginService, DialogController];
+        return [LoginService, DialogController, Router];
     }
 
-    constructor(loginService, dialogController) {
+    constructor(loginService, dialogController, router) {
         this.EMPTY_USERNAME_ERROR = 'Username must be non-empty';
         this.EMPTY_PASSWORD_ERROR = 'Password must be non-empty';
 
@@ -15,6 +16,7 @@ export class LoginController {
         this.errors = [];
 
         this.$login = loginService;
+        this.router = router;
         this.dialogCtrl = dialogController;
     }
 
@@ -26,9 +28,9 @@ export class LoginController {
         }
 
         this.$login.authenticate(this.username, this.password)
-            .then((user) => {
-                this.dialogCtrl.ok(user);
-                // Redirect to home
+            .then((userInfo) => {
+                this.dialogCtrl.ok(userInfo);
+                this.router.navigate('home');
             })
             .catch((error) => {
                 this.errors = [error];

@@ -10,16 +10,17 @@ export class IndexController {
     constructor(dialogService, router) {
         this.user = null;
         this.$dialog = dialogService;
-        this.$router = router;
+        this.router = router;
     }
 
     showLoginDialog() {
         this.$dialog.open({viewModel: LoginController, lock: true})
-            .whenClosed((response) => {
+            .whenClosed(response => {
                 if (!response.wasCancelled) {
+                    console.log(response);
                     if (response.output) {
                         this.user = response.output;
-                        this.$router.navigate('home');
+                        this.router.navigate('home');
                     } else {
                         console.log("Could not login")
                     }

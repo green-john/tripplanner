@@ -29,6 +29,11 @@ export class LoginService {
         });
     }
 
+    logout() {
+        this.userInfo = null;
+        this.userLoggedIn = false;
+    }
+
     isUserLoggedIn() {
         return (this.userLoggedIn && this.userInfo);
     }
@@ -50,6 +55,10 @@ export class LoginService {
     }
 
     getAuthorizationHeader() {
+        if (!this.isUserLoggedIn()) {
+            throw Error("User is not logged in");
+        }
+
         const user = this.userInfo;
         const authHeader = this.$serializer.encodeCredentialsTokenAuth(user.token);
 
