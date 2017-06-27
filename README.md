@@ -70,17 +70,14 @@ First install all the requirements and then run:
     python manage.py runserver
     
 ## TODO
-- Deploy to a production server
-- Write angular tests
+- Test aurelia code.
+- Add date picker for dates
 - Make resilient to page reload in the browser.
 - Add edit/delete user through in the UI.
-- Build UI for Admin user that allows viewing other user's trips.
 - Improve display of errors in the UI and add validations for the fields in the web.
 - Editing a user by assigning an existing username returns a 201 which is incorrect. Should error out.
+- Build UI for Admin user that allows viewing other user's trips.
 - Improve the communication from server to client using model serializers or other mechanism.
 - The full list of trips for the user was not behaving correctly, specially when adding/creating a new trip
-- Add validation for dates (e.g. start_date <= end_date). Better still, add date-picker.
-- Add endpoint to query all trips from a user.
-- Complete TODOs in views/models in core and users.
-
+- Deploy to a production server
 
