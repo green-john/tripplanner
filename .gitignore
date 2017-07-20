@@ -8,6 +8,7 @@ build
 eggs
 parts
 bin
+coverage-*
 var
 sdist
 develop-eggs

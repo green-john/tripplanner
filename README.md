@@ -58,9 +58,13 @@ virtualenv.
 
     pip install -r requirements.txt
    
-then run the nose command:
+then:
 
-    nose2
+    ./manage.py tests
+    
+If you want to run javascript tests as well, run:
+
+    ./manage all_tests
     
 This will run all the tests.
 

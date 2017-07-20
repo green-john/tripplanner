@@ -1,5 +1,7 @@
 #!/usr/bin/env python
+import os
 import datetime
+from subprocess import run
 from flask_script import Manager, Shell
 
 from tripplanner import create_app, db, utils
@@ -15,6 +17,24 @@ def make_shell_context():
 
 
 manager.add_command('shell', Shell(make_context=make_shell_context))
+
+
+@manager.command
+def tests():
+    run('nose2')
+
+
+@manager.command
+def js_tests():
+    os.chdir('tripplanner/static/js')
+    run('node_modules/.bin/jest')
+
+
+@manager.command
+def all_tests():
+    res = run('nose2')
+    if res.returncode == 0:
+        js_tests()
 
 
 @manager.command
