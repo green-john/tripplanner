@@ -1,0 +1,8 @@
+<template>
+    <div>
+        <h1 style="color: red">404 Not Found</h1>
+        <div class="row">
+            <p>The resource you are looking for could not be found.</p>
+        </div>
+    </div>
+</template>

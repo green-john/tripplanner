@@ -1,9 +1,8 @@
 const path = require('path');
-const {AureliaPlugin} = require('aurelia-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: 'aurelia-bootstrapper'
+        main: 'main'
     },
 
     output: {
@@ -13,18 +12,31 @@ module.exports = {
     },
 
     resolve: {
-        extensions: [".js"],
-        modules: ["src", "node_modules"].map(x => path.resolve(x))
+        extensions: [".js", ".vue"],
+        modules: ["src", "node_modules"].map(x => path.resolve(x)),
+        alias: {
+            'vue$': 'vue/dist/vue.esm.js'
+        }
     },
 
     module: {
         rules: [
-            {test: /\.css$/i, use: "css-loader" },
-            {test: /\.html$/i, use: "html-loader"}
+            {
+                test: /\.vue$/i,
+                use: "vue-loader" },
+            {
+                test: /\.js$/i,
+                use: "babel-loader",
+                exclude: '/node-modules/'
+            },
+            {
+                test: /\.css$/i,
+                use: "css-loader"
+            },
+            {
+                test: /\.html$/i,
+                use: "html-loader",
+            }
         ]
     },
-
-    plugins: [
-        new AureliaPlugin()
-    ]
 };

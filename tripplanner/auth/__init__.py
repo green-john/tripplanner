@@ -10,6 +10,7 @@ ACCESS_DENIED_MSG = "Unauthorized Access"
 @basic_auth.verify_password
 def _verify_password(username, password):
     g.user = None
+    print(username, password)
     user = User.query.filter_by(username=username).first()
     if not user or not user.verify_password(password):
         return False

@@ -7,7 +7,7 @@ from tripplanner.config import config
 
 db = SQLAlchemy()
 mail = Mail()
-basic_auth = HTTPBasicAuth()
+basic_auth = HTTPBasicAuth(scheme='Custom')
 token_auth = HTTPTokenAuth(scheme='Token')
 
 

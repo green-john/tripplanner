@@ -1,7 +1,7 @@
 import { Router } from 'aurelia-router';
 import { DialogService } from 'aurelia-dialog';
 import { LoginController } from 'login/login';
-import { LoginService } from 'login/login.service';
+import { LoginService } from 'services/login.service';
 
 export class IndexController {
     static inject() {

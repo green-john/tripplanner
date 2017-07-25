@@ -1,24 +1,18 @@
-import { SerializerService } from 'utils/serializer.service';
 
 export class LoginService {
-    constructor(serializerService, httpService) {
-        this.$serializer = serializerService;
+    constructor(httpService, serializerService) {
         this.$http = httpService;
+        this.$serializer = serializerService;
         this.userLoggedIn = false;
         this.userInfo = null;
     }
 
-    static inject() {
-        return [SerializerService, 'axios']
-    }
-
     authenticate(username, password) {
-        let authHeader = this.$serializer
-            .encodeCredentialsForBasicAuth(username, password);
-
+        console.log(username);
+        console.log(password);
         return this.$http.post('/token/', {
-            headers: {
-                'Authorization': authHeader
+            auth: {
+                username, password
             }
         }).then(response => {
             this.userInfo = response.data;
@@ -26,6 +20,7 @@ export class LoginService {
             return this.userInfo;
         }).catch(error => {
             this._handleErrors(error);
+            throw error;
         });
     }
 
