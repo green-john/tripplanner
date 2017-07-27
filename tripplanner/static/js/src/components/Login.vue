@@ -48,24 +48,19 @@
         methods: {
             login() {
                 const localErrors = this._validateForm();
+                this.errors = localErrors;
                 if (localErrors.length > 0) {
-                    this.errors = localErrors;
                     throw new Error(localErrors);
                 }
 
                 return this.$login.authenticate(this.username, this.password)
                     .then(userInfo => {
-                        this.createLoginCookies();
-                        console.log(userInfo);
+                        // Redirect to home
                     })
                     .catch(error => {
                         this.errors = [error.response.data];
                         console.log(error);
                     })
-            },
-
-            createLoginCookies(userData) {
-                console.log(`Cookies created for ${userData}`);
             },
 
             _validateForm() {

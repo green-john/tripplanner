@@ -15,7 +15,9 @@ module.exports = {
         extensions: [".js", ".vue"],
         modules: ["src", "node_modules"].map(x => path.resolve(x)),
         alias: {
-            'vue$': 'vue/dist/vue.esm.js'
+            'vue$': 'vue/dist/vue.esm.js',
+            'axios$': 'axios/dist/axios.js',
+            'cookie-js$': 'js-cookie/src/js.cookie.js',
         }
     },
 

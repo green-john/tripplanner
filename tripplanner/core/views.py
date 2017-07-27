@@ -31,7 +31,7 @@ def favicon():
 
 @core_app.errorhandler(404)
 def page_not_found(e):
-    return send_file('static/templates/404.vue'), 404
+    return send_file('static/templates/404.html'), 404
 
 
 @core_app.route('/all_trips/', methods=['GET'])

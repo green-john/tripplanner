@@ -5,36 +5,43 @@ const mockSerializer = {
     encodeCredentialsTokenAuth: jest.fn()
 };
 
-const mockHttpService = {
-    post: jest.fn()
+const mockHttpService = jest.fn();
+
+const mockCookieService = {
+    set: jest.fn(),
+    remove: jest.fn()
 };
 
 const REGULAR_USER = {
     username: "user",
-    token: "user@user",
+    token: "user@regular",
     roles: ["regular"],
     id: "userId"
 };
 
 const ADMIN_USER = {
     username: "user",
-    token: "user@user",
+    token: "user@admin",
     roles: ["regular", "admin"],
     id: "userId"
 };
 
 const MANAGER_USER = {
     username: "user",
-    token: "user@user",
+    token: "user@manager",
     roles: ["regular", "manager"],
     id: "userId"
 };
 
+beforeEach(() => {
+    jest.clearAllMocks();
+});
+
 describe('Authentication', () => {
     test('Auth regular user', done => {
         // Arrange
-        mockHttpService.post.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        mockHttpService.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
         loginService.authenticate("user", "pass")
@@ -43,6 +50,8 @@ describe('Authentication', () => {
                 expect(loginService.isUserLoggedIn()).toBeTruthy();
                 expect(loginService.isUserManager()).toBeFalsy();
                 expect(loginService.isUserAdmin()).toBeFalsy();
+                expect(mockCookieService.set)
+                    .toBeCalledWith('authToken', 'user@regular');
 
                 done();
             }).catch();
@@ -50,8 +59,8 @@ describe('Authentication', () => {
 
     test('Auth admin user', done => {
         // Arrange
-        mockHttpService.post.mockReturnValue(Promise.resolve({data: ADMIN_USER}));
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        mockHttpService.mockReturnValue(Promise.resolve({data: ADMIN_USER}));
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
         loginService.authenticate("user", "pass").then(() => {
@@ -59,6 +68,8 @@ describe('Authentication', () => {
             expect(loginService.isUserLoggedIn()).toBeTruthy();
             expect(loginService.isUserAdmin()).toBeTruthy();
             expect(loginService.isUserManager()).toBeFalsy();
+            expect(mockCookieService.set)
+                .toBeCalledWith('authToken', 'user@admin');
 
             done();
         }).catch();
@@ -66,8 +77,8 @@ describe('Authentication', () => {
 
     test('Auth user manager', done => {
         // Arrange
-        mockHttpService.post.mockReturnValue(Promise.resolve({data: MANAGER_USER}));
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        mockHttpService.mockReturnValue(Promise.resolve({data: MANAGER_USER}));
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
         loginService.authenticate("user", "pass")
@@ -76,6 +87,8 @@ describe('Authentication', () => {
                 expect(loginService.isUserLoggedIn()).toBeTruthy();
                 expect(loginService.isUserManager()).toBeTruthy();
                 expect(loginService.isUserAdmin()).toBeFalsy();
+                expect(mockCookieService.set)
+                    .toBeCalledWith('authToken', 'user@manager');
 
                 done();
             })
@@ -88,8 +101,8 @@ describe('Authentication', () => {
             request: "something",
             response: "Error with the server"
         };
-        mockHttpService.post.mockReturnValue(Promise.reject(COMPLETE_ERROR));
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        mockHttpService.mockReturnValue(Promise.reject(COMPLETE_ERROR));
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
         // Act
 
         loginService.authenticate("user", "asdf")
@@ -108,8 +121,8 @@ describe('Authentication', () => {
         const ERROR_NO_RESPONSE = {
             request: "something",
         };
-        mockHttpService.post.mockReturnValue(Promise.reject(ERROR_NO_RESPONSE));
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        mockHttpService.mockReturnValue(Promise.reject(ERROR_NO_RESPONSE));
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
         loginService.authenticate("user", "asdf")
@@ -128,8 +141,8 @@ describe('Authentication', () => {
         const WEIRD_ERROR = {
             errrrrr: "error happened"
         };
-        mockHttpService.post.mockReturnValue(Promise.reject(WEIRD_ERROR));
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        mockHttpService.mockReturnValue(Promise.reject(WEIRD_ERROR));
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
         // Act
 
         loginService.authenticate("user", "asdf")
@@ -145,8 +158,8 @@ describe('Authentication', () => {
 
     test('Logout', done => {
         // Arrange
-        mockHttpService.post.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        mockHttpService.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
         loginService.authenticate("user", "pass")
@@ -157,6 +170,7 @@ describe('Authentication', () => {
                 expect(loginService.isUserManager()).toBeFalsy();
                 expect(loginService.isUserAdmin()).toBeFalsy();
                 expect(loginService.getUser()).toBeNull();
+                expect(mockCookieService.remove).toBeCalledWith('authToken');
 
                 done();
             })
@@ -167,7 +181,7 @@ describe('Authentication', () => {
 describe('GetAuthorizationHeader', () => {
     test('User not logged in', () => {
         // Arrange
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
         try {
@@ -181,9 +195,9 @@ describe('GetAuthorizationHeader', () => {
     test('Regular user logged in', done => {
         // Arrange
         mockSerializer.encodeCredentialsTokenAuth.mockReturnValue('Token');
-        mockHttpService.post.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
+        mockHttpService.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
 
-        const loginService = new LoginService(mockHttpService, mockSerializer);
+        const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
         loginService.authenticate("user", "pass")

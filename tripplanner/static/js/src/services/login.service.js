@@ -1,21 +1,21 @@
 
 export class LoginService {
-    constructor(httpService, serializerService) {
+    constructor(httpService, cookieService, serializerService) {
         this.$http = httpService;
         this.$serializer = serializerService;
+        this.$cookie = cookieService;
         this.userLoggedIn = false;
         this.userInfo = null;
     }
 
     authenticate(username, password) {
-        console.log(username);
-        console.log(password);
-        return this.$http.post('/token/', {
-            auth: {
-                username, password
-            }
+        return this.$http({
+            url: '/token',
+            method: 'post',
+            auth: {username, password},
         }).then(response => {
             this.userInfo = response.data;
+            this.$cookie.set('authToken', response.data.token);
             this.userLoggedIn = true;
             return this.userInfo;
         }).catch(error => {
@@ -25,6 +25,7 @@ export class LoginService {
     }
 
     logout() {
+        this.$cookie.remove('authToken');
         this.userInfo = null;
         this.userLoggedIn = false;
     }
