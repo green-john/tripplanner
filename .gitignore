@@ -39,4 +39,4 @@ man/
 node_modules/
 
 # Do not ignore js
-!/**/static/lib/
+!/webapp/lib/
