@@ -17,7 +17,7 @@ module.exports = {
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
             'axios$': 'axios/dist/axios.js',
-            'cookie-js$': 'js-cookie/src/js.cookie.js',
+            'js-cookie$': 'js-cookie/src/js.cookie.js',
         }
     },
 

@@ -26,8 +26,8 @@ def tests():
 
 @manager.command
 def js_tests():
-    os.chdir('tripplanner/static/js')
-    run('node_modules/.bin/jest')
+    os.chdir('tripplanner/webapp/js')
+    run(['./node_modules/.bin/nps', 'test'])
 
 
 @manager.command

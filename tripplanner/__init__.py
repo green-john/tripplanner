@@ -17,7 +17,9 @@ def create_app(config_name):
     :param config_name: name of the configuration to use
     :return: application initialized
     """
-    app = Flask(__name__)
+    STATIC_URL = config[config_name].STATIC_URL_PATH
+    STATIC_FOLDER = config[config_name].STATIC_FOLDER
+    app = Flask(__name__, static_url_path=STATIC_URL, static_folder=STATIC_FOLDER)
     app.config.from_object(config[config_name])
     app.url_map.strict_slashes = False
 

@@ -4,7 +4,7 @@
         <form @submit.prevent="login">
             <div class="col-xs-offset-3 col-xs-6">
                 <div class="row">
-                    <input type="text" v-model="username" placeholder="username">
+                    <input v-model="username" placeholder="username">
                 </div>
                 <div class="row">
                     <input type="password" v-model="password" placeholder="password">
@@ -55,11 +55,12 @@
 
                 return this.$login.authenticate(this.username, this.password)
                     .then(userInfo => {
-                        // Redirect to home
+                        this.$router.push({name:'home'})
                     })
                     .catch(error => {
-                        this.errors = [error.response.data];
                         console.log(error);
+                        this.errors = [error.response.data];
+                        throw error;
                     })
             },
 

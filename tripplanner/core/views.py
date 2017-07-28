@@ -20,7 +20,7 @@ WRONG_DATE_ERROR_MSG = 'start_date has the wrong format. Must be dd/mm/YYYY'
 @core_app.route('/', defaults={'path': ''})
 @core_app.route('/<path:path>')
 def catch_all(path):
-    return send_file('static/templates/base.html')
+    return send_file('webapp/templates/base.html')
 
 
 @core_app.route('/favicon.ico')
@@ -31,7 +31,7 @@ def favicon():
 
 @core_app.errorhandler(404)
 def page_not_found(e):
-    return send_file('static/templates/404.html'), 404
+    return send_file('webapp/templates/404.html'), 404
 
 
 @core_app.route('/all_trips/', methods=['GET'])

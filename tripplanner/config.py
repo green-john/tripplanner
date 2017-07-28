@@ -7,6 +7,8 @@ class Config:
     SQLALCHEMY_COMMIT_ON_TEARDOWN = True
     SQLALCHEMY_RECORD_QUERIES = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    STATIC_FOLDER = "webapp/"
+    STATIC_URL_PATH = "/webapp"
     MAIL_USERNAME = 'andresfeliperu@gmail.com'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     MAIL_DEFAULT_SENDER = '"Sender" <noreply@asdf.com>'
