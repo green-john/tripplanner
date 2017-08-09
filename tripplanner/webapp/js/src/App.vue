@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <router-link id="logout" :to="{name: 'logout'}">Logout</router-link>
         <router-view></router-view>
     </div>
 </template>
@@ -18,5 +19,13 @@
         text-align: center;
         color: #2c3e50;
         margin-top: 60px;
+    }
+
+    #logout {
+        position: fixed;
+        top: 5px;
+        right: 5px;
+        background-color: #ff3faa;
+        color: #fff;
     }
 </style>
