@@ -8,20 +8,46 @@ export class LoginService {
         this.userInfo = null;
     }
 
+    // getToken() {
+    //     return this.$cookie.get('authToken');
+    // }
+
+    // getUserGivenToken(token) {
+    //     return this.$http({
+    //         url: '/user_info',
+    //         method: 'post',
+    //         data: {
+    //             'token': token
+    //         },
+    //         headers: {
+    //             'Authorization': this.getAuthorizationHeader()
+    //         },
+    //     }).then(response => {
+    //         this.saveUser(response.data);
+    //     }).catch(error => {
+    //         this._handleErrors(error);
+    //         throw error;
+    //     });
+    // }
+
     authenticate(username, password) {
         return this.$http({
             url: '/token',
             method: 'post',
             auth: {username, password},
         }).then(response => {
-            this.userInfo = response.data;
-            this.$cookie.set('authToken', response.data.token);
-            this.userLoggedIn = true;
-            return this.userInfo;
+            return this.saveUser(response.data);
         }).catch(error => {
             this._handleErrors(error);
             throw error;
         });
+    }
+
+    saveUser(userData) {
+        this.userInfo = userData;
+        this.$cookie.set('authToken', userData.token);
+        this.userLoggedIn = true;
+        return this.userInfo;
     }
 
     logout() {
@@ -55,12 +81,7 @@ export class LoginService {
             throw Error("User is not logged in");
         }
 
-        const user = this.userInfo;
-        const authHeader = this.$serializer.encodeCredentialsTokenAuth(user.token);
-
-        return {
-            'Authorization': authHeader
-        };
+        return this.$serializer.encodeCredentialsTokenAuth(this.userInfo.token);
     }
 
     getUser() {

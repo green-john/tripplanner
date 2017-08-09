@@ -1,6 +1,9 @@
 <template>
     <div class="col-xs-offset-3">
-        <p>Welcome {{user.username}}. Here you can manage your things:</p>
+
+        <div v-if="user">
+            <p>Welcome {{user.username}}. Here you can manage your things:</p>
+        </div>
 
         <ul>
             <li v-if="isAdmin()"><router-link :to="{name: 'users'}">Manage Users</router-link></li>
@@ -19,8 +22,9 @@
 
         data() {
             return {
-                roles: []
-            };
+                roles: [],
+                user: this.$login.getUser()
+            }
         },
 
         methods: {
@@ -33,9 +37,10 @@
             }
         },
 
-        computed: {
-            user: function() {
-                return this.$login.getUser();
+        created() {
+            console.log(this.$login.getUser());
+            if (!this.user) {
+                this.$router.push({name: 'login'});
             }
         }
     }
