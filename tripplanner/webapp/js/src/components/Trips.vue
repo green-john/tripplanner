@@ -26,8 +26,8 @@
                 <h2>Create Trip</h2>
                 <form @submit.prevent="createTrip">
                     <input v-model="destination" placeholder="Destination"><br>
-                    <input v-model="start_date" placeholder="Start Date (dd/mm/yyyy)"><br>
-                    <input v-model="end_date" placeholder="End Date (dd/mm/yyyy)"><br>
+                    <input type="date" placeholder="Start Date (dd/mm/yyyy)" v-model="start_date"><br>
+                    <input type="date" placeholder="End Date (dd/mm/yyyy)" v-model="end_date"><br>
                     <input v-model="comment" placeholder="Comment"><br>
 
                     <button @click.prevent="createTrip">Create Trip</button>
@@ -38,8 +38,8 @@
                 <h2>Filter Trips</h2>
                 <form @submit.prevent="filterTrips">
                     <input v-model="filter_destination" placeholder="Destination"><br>
-                    <input v-model="filter_start_date" placeholder="Start Date (dd/mm/yyyy)"><br>
-                    <input v-model="filter_end_date" placeholder="End Date (dd/mm/yyyy)"><br>
+                    <input type="date" v-model="filter_start_date" placeholder="Start Date (dd/mm/yyyy)"><br>
+                    <input type="date" v-model="filter_end_date" placeholder="End Date (dd/mm/yyyy)"><br>
 
                     <button @click.prevent="filterTrips">Get Trips</button>
                 </form>
@@ -97,7 +97,12 @@
                 filter_start_date: "",
                 filter_end_date: "",
 
-                user: this.$login.getUser()
+                user: this.$login.getUser(),
+
+                showStartDate: false,
+                showEndDate: false,
+                showFilterStartDate: false,
+                showFilterEndDate: false,
             }
         },
 
@@ -155,8 +160,8 @@
             _buildTripData() {
                 const data = Object.create(null);
                 data.destination = this.destination;
-                data.start_date = this.start_date;
-                data.end_date = this.end_date;
+                data.start_date = this._convertDate(this.start_date);
+                data.end_date = this._convertDate(this.end_date);
                 data.comment = this.comment;
                 data.user_id = this.user['id'];
 
@@ -166,10 +171,20 @@
             _buildFilterQuery() {
                 const data = Object.create(null);
                 data.destination = this.filter_destination;
-                data.start_date = this.filter_start_date;
-                data.end_date = this.filter_end_date;
+                data.start_date = this._convertDate(this.filter_start_date);
+                data.end_date = this._convertDate(this.filter_end_date);
 
                 return data;
+            },
+
+            _convertDate(date) {
+                if (!date) {
+                    return "";
+                }
+                const d = new Date(date);
+                const day = d.getDate() + 1;
+                const month = d.getMonth() + 1;
+                return `${day}/${month}/${d.getFullYear()}`;
             },
 
             _validate(data) {
@@ -184,19 +199,14 @@
 
             _handleErrors(response) {
                 this.errors = [];
-                const errors = response.data.errors;
-                if (errors) {
-                    errors.forEach(err => {
-                        this.errors.push(err);
-                    });
+                const error = response.data.error;
+                if (error) {
+                    this.errors.push(error);
                 }
                 else {
                     this.errors.push(response);
                 }
             }
         }
-
-
-    }
-    ;
+    };
 </script>
