@@ -11,12 +11,12 @@ import {LoginService} from 'services/login.service';
 import {SerializerService} from 'services/serializer.service';
 import {TripService} from "../services/trips.service";
 
-Vue.use(Router);
-
 const httpService = Axios.create();
 const serializerService = new SerializerService();
 const loginService = new LoginService(httpService, Cookie, serializerService);
 const tripService = new TripService(httpService, loginService);
+
+Vue.use(Router);
 
 const routerConfig = {
     mode: 'history',
