@@ -1,17 +1,15 @@
 <template>
     <div>
-        <div class="col-xs-11">
-            <h2>Next Month's Itinerary</h2>
-            <ul>
-                <li v-for="trip in nextMonthItinerary">
-                    <label>
-                        Trip to {{trip.destination}} in {{trip.start_date}}.
-                    </label>
-                </li>
-            </ul>
+        <h2>Next Month's Itinerary</h2>
+        <ul>
+            <li v-for="trip in nextMonthItinerary">
+                <label>
+                    Trip to {{trip.destination}} in {{trip.start_date}}.
+                </label>
+            </li>
+        </ul>
 
-            <button @click="getNextMonthItinerary">Refresh</button>
-        </div>
+        <button @click="getNextMonthItinerary">Refresh</button>
     </div>
 </template>
 

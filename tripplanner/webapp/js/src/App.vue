@@ -1,5 +1,6 @@
 <template>
     <div id="app">
+        <h1>Trip Planner</h1>
         <router-link id="logout" :to="{name: 'logout'}">Logout</router-link>
         <router-view></router-view>
     </div>

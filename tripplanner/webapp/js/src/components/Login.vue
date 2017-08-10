@@ -2,22 +2,12 @@
     <div>
         <h2>Log In compadre!</h2>
         <form @submit.prevent="login">
-            <div class="col-xs-offset-3 col-xs-6">
-                <div class="row">
-                    <input v-model="username" placeholder="username">
-                </div>
-                <div class="row">
-                    <input type="password" v-model="password" placeholder="password">
-                </div>
-                <div class="row">
-                    <div class="individualError" v-for="error in errors">
-                        {{error}}
-                    </div>
-                </div>
-                <div class="row">
-                    <button @click.prevent="login">Login</button>
-                </div>
+            <input v-model="username" placeholder="username">
+            <input type="password" v-model="password" placeholder="password">
+            <div class="individualError" v-for="error in errors">
+                {{error}}
             </div>
+            <button @click.prevent="login">Login</button>
         </form>
     </div>
 </template>
@@ -55,7 +45,7 @@
 
                 return this.$login.authenticate(this.username, this.password)
                     .then(userInfo => {
-                        this.$router.push({name:'home'})
+                        this.$router.push({name: 'home'})
                     })
                     .catch(error => {
                         console.log(error);
