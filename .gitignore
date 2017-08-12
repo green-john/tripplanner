@@ -30,7 +30,7 @@ lib/
 share
 
 # Database
-*.sqlite
+*.db
 pip-selfcheck.json
 __pycache__
 

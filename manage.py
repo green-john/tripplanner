@@ -2,47 +2,39 @@
 import os
 import datetime
 from subprocess import run
-from flask_script import Manager, Shell
 
 from tripplanner import create_app, db, utils
 from tripplanner.users.models import User, Role
 from tripplanner.core.models import Trip
 
-app = create_app('dev')
-manager = Manager(app)
+app = create_app(os.environ.get('TP_ENV', 'dev'))
 
 
 def make_shell_context():
     return {'app': app, 'db': db}
 
 
-manager.add_command('shell', Shell(make_context=make_shell_context))
-
-
-@manager.command
 def tests():
     run('nose2')
 
 
-@manager.command
 def js_tests():
     os.chdir('tripplanner/webapp/js')
     run(['./node_modules/.bin/nps', 'test'])
 
 
-@manager.command
 def all_tests():
     res = run('nose2')
     if res.returncode == 0:
         js_tests()
 
 
-@manager.command
+@app.cli.command()
 def create_db():
     db.create_all()
 
 
-@manager.command
+@app.cli.command()
 def drop_db():
     db.drop_all()
 
@@ -51,7 +43,6 @@ def create_roles():
     Role.create_roles()
 
 
-@manager.command
 def create_users_and_trips():
     create_roles()
     u1 = User('u1', 'p1', 'Us', 'Er1')
@@ -74,6 +65,3 @@ def create_users_and_trips():
 
     db.session.add_all([u1, u2, u3, admin, user_manager, t1, t2, t3])
     db.session.commit()
-
-if __name__ == '__main__':
-    manager.run()
