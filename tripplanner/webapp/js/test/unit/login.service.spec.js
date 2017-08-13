@@ -205,7 +205,7 @@ describe('GetAuthorizationHeader', () => {
                 const authHeader = loginService.getAuthorizationHeader();
 
                 // Assert
-                expect(authHeader).toEqual({Authorization: 'Token'});
+                expect(authHeader).toEqual('Token');
                 done();
             })
             .catch();

@@ -30,12 +30,12 @@ def all_tests():
 
 
 @app.cli.command()
-def create_db():
+def initdb():
     db.create_all()
 
 
 @app.cli.command()
-def drop_db():
+def dropdb():
     db.drop_all()
 
 
@@ -43,7 +43,8 @@ def create_roles():
     Role.create_roles()
 
 
-def create_users_and_trips():
+@app.cli.command()
+def fill_db():
     create_roles()
     u1 = User('u1', 'p1', 'Us', 'Er1')
     u2 = User('u2', 'p2', 'Us', 'Er2')

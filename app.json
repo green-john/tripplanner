@@ -1,0 +1,12 @@
+{
+    "name": "pirtplanner",
+    "buildpacks": [
+        {
+            "url": "heroku/nodejs",
+            "url": "heroku/python"
+        }
+    ],
+    "env": {
+        "FLASK_APP": "manage.py"
+    }
+}

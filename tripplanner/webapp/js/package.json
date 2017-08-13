@@ -21,9 +21,6 @@
             "<rootDir>/test/jest-pretest.js"
         ],
         "testEnvironment": "node",
-        "moduleNameMapper": {
-            "aurelia-(.*)": "<rootDir>/node_modules/$1"
-        },
         "collectCoverage": true,
         "collectCoverageFrom": [
             "src/**/*.{js,ts}",
@@ -60,6 +57,10 @@
     "scripts": {
         "start": "nps",
         "build": "nps build",
-        "test": "nps test"
+        "test": "nps test",
+        "postinstall": "nps build"
+    },
+    "engines": {
+        "node": "8.3.0"
     }
 }

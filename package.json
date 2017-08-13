@@ -1,0 +1,11 @@
+{
+    "name": "pritplanner",
+    "version": "0.0.1",
+    "scripts": {
+        "postinstall": "npm install --prefix tripplanner/webapp/js"
+    },
+    "dependencies": {},
+    "engines": {
+        "node": "8.3.0"
+    }
+}
