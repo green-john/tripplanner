@@ -25,7 +25,7 @@ def create_app(config_name):
 
     # Imports here to avoid circular imports
     from tripplanner.users.views import user_app
-    from tripplanner.core.views import core_app
+    from tripplanner.trips.views import core_app
     app.register_blueprint(core_app)
     app.register_blueprint(user_app)
 

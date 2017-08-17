@@ -4,7 +4,7 @@ import datetime
 
 from tripplanner import db
 from tripplanner.users.models import User, Role
-from tripplanner.core.models import Trip
+from tripplanner.trips.models import Trip
 
 
 class MockDate(datetime.date):

@@ -8,7 +8,7 @@ from nose2.tools import params
 from tests import utils
 from tripplanner import create_app, db
 from tripplanner.users.models import Role
-from tripplanner.core.models import Trip
+from tripplanner.trips.models import Trip
 
 from tripplanner import utils as tp_utils
 

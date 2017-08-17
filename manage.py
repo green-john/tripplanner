@@ -5,7 +5,7 @@ from subprocess import run
 
 from tripplanner import create_app, db, utils
 from tripplanner.users.models import User, Role
-from tripplanner.core.models import Trip
+from tripplanner.trips.models import Trip
 
 app = create_app(os.environ.get('TP_ENV', 'dev'))
 

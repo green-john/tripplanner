@@ -7,7 +7,7 @@ from flask import (Blueprint, request, abort, g, jsonify, send_file,
 
 from tripplanner import db, token_auth, utils
 from tripplanner.auth.decorators import allow_superusers_only, allow_superuser_and_owner
-from tripplanner.core.models import Trip
+from tripplanner.trips.models import Trip
 from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
 
