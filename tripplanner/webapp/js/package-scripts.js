@@ -7,7 +7,7 @@ module.exports = {
             jest: {
                 default: series(
                     rimraf('test/jest-coverage.js'),
-                    'jest'
+                    'jest --config jest-config.json'
                 )
             },
         },

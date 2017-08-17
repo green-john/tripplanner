@@ -1,0 +1,32 @@
+{
+    "verbose": true,
+    "modulePaths": [
+        "<rootDir>/src",
+        "<rootDir>/node_modules"
+    ],
+    "moduleFileExtensions": [
+        "js",
+        "vue",
+        "json"
+    ],
+    "transform": {
+        "^.+\\.jsx?$": "babel-jest",
+        ".*\\.vue$": "jest-vue-preprocessor"
+    },
+    "testRegex": "\\.spec\\.(ts|js)x?$",
+    "setupFiles": [
+        "<rootDir>/test/jest-pretest.js"
+    ],
+    "testEnvironment": "node",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+        "src/**/*.{js,ts}",
+        "!**/*.spec.{js,ts}",
+        "!**/node_modules/**",
+        "!**/test/**"
+    ],
+    "coverageDirectory": "<rootDir>/test/coverage-jest",
+    "coverageReporters": [
+        "html"
+    ]
+}

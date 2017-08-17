@@ -7,10 +7,6 @@ stages:
 before_script:
   - curl -sL https://deb.nodesource.com/setup_8.x | bash -
   - apt-get install -qy python3-dev python3-pip nodejs
-  - npm --version
-  - node --version
-  - python --version
-  - pip --version
 
 test:
   stage: test
@@ -19,15 +15,12 @@ test:
     - tox -e dev
     - cd tripplanner/webapp/js
     - npm install
-    - node_modules/.bin/nps test
+    - npm test
 
 deploy:
   stage: deploy
   script:
     - apt-get install -y ruby-dev rubygems
-    - cd tripplanner/webapp/js
-    - npm install
-    - cd ../../..
     - gem install dpl
     - dpl --provider=heroku --app=pirtplanner --api-key=$HEROKU_MASTER_API_KEY
   only:
