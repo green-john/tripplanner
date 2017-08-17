@@ -7,9 +7,9 @@ import Login from 'components/Login';
 import Logout from 'components/Logout';
 import Trips from 'components/Trips';
 import Home from 'components/Home';
-import {LoginService} from 'services/login.service';
-import {SerializerService} from 'services/serializer.service';
-import {TripService} from "../services/trips.service";
+import {LoginService} from 'auth/login.service';
+import {SerializerService} from 'utils/serializer.service';
+import {TripService} from "../trips/trips.service";
 
 const httpService = Axios.create();
 const serializerService = new SerializerService();

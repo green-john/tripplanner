@@ -13,7 +13,7 @@
 </template>
 
 <script>
-    import {LoginService} from 'services/login.service';
+    import {LoginService} from 'auth/login.service';
 
     export default {
         name: 'login',

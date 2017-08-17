@@ -1,4 +1,4 @@
-import {LoginService} from 'services/login.service';
+import {LoginService} from 'auth/login.service';
 
 const mockSerializer = {
     encodeCredentialsForBasicAuth: jest.fn(),

@@ -45,8 +45,8 @@
 
 <script>
     import {formatDate} from 'utils/dates';
-    import TripFilter from 'components/TripFilter';
-    import UpcomingTrips from 'components/UpcomingTrips';
+    import TripFilter from 'webapp/js/src/trips/TripFilter';
+    import UpcomingTrips from 'trips/UpcomingTrips';
 
     export default {
         name: 'trips',
