@@ -1,20 +1,19 @@
-<template>
-    <div class="col-xs-offset-3">
+<template lang="pug">
+    section
+        router-link#logout(:to="{name: 'logout'}") Logout
+        div(v-if="user")
+            p Welcome {{user.username}}. This is your home.
 
-        <div v-if="user">
-            <p>Welcome {{user.username}}. Here you can manage your things:</p>
-        </div>
-
-        <ul>
-            <li v-if="isAdmin()"><router-link :to="{name: 'users'}">Manage Users</router-link></li>
-            <li><router-link :to="{name: 'trips'}">Manage Trips</router-link></li>
-        </ul>
-    </div>
+        ul
+            li(v-if="isAdmin()")
+                router-link(:to="{name: 'users'}") Manage Users
+            li
+                router-link(:to="{name: 'trips'}") Manage Trips
 </template>
 
 <script>
     export default {
-        name: 'HomeController',
+        name: 'home-component',
 
         props: {
             $login: Object,
@@ -22,26 +21,62 @@
 
         data() {
             return {
-                roles: [],
-                user: this.$login.getUser()
+                user: null
             }
         },
 
         methods: {
             isAdmin() {
-                return this.roles.indexOf('admin') !== -1;
-            },
-
-            isManager() {
-                return this.roles.indexOf('manager') !== -1;
+                if (this.user) {
+                    return this.user.roles.indexOf("admin") !== -1;
+                }
+                return false;
             }
         },
 
-        created() {
-            console.log(this.$login.getUser());
-            if (!this.user) {
-                this.$router.push({name: 'login'});
-            }
+        mounted() {
+            this.$login.getLoggedUser().then(userData => {
+                this.user = userData;
+                if (this.user === null) {
+                    this.$router.push({name: 'login'});
+                }
+            });
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    $bg-color: #32414d;
+
+    section {
+        padding: 1rem;
+
+        a {
+            color: white;
+            text-decoration: none;
+
+            &#logout {
+                top: 5px;
+                right: 5px;
+                position: absolute;
+            }
+        }
+
+        ul {
+            padding: .5rem;
+            list-style: none;
+
+            li {
+                background-color: #fff;
+                border-radius: .3rem;
+                display: inline-block;
+                padding: .5rem;
+                margin: 0 .4rem;
+
+                a {
+                    color: $bg-color;
+                }
+            }
+        }
+    }
+</style>

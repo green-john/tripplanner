@@ -1,19 +1,23 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 import Axios from 'axios';
-import Cookie from 'js-cookie';
 
-import Login from 'components/Login';
-import Logout from 'components/Logout';
-import Trips from 'components/Trips';
-import Home from 'components/Home';
+import Login from 'auth/Login.vue';
+import Logout from 'auth/Logout.vue';
+import Trips from 'trips/Trips.vue';
+import Home from 'home/Home.vue';
 import {LoginService} from 'auth/login.service';
-import {SerializerService} from 'utils/serializer.service';
+import {SerializerUtil} from 'utils/serializer';
 import {TripService} from "../trips/trips.service";
 
-const httpService = Axios.create();
-const serializerService = new SerializerService();
-const loginService = new LoginService(httpService, Cookie, serializerService);
+const httpService = Axios.create({
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+
+const serializerService = new SerializerUtil();
+const loginService = new LoginService(httpService, window.localStorage, serializerService);
 const tripService = new TripService(httpService, loginService);
 
 Vue.use(Router);

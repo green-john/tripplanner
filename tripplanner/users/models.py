@@ -39,6 +39,7 @@ class User(db.Model):
 
     username = db.Column(db.String(255), nullable=False, index=True, unique=True)
     password = db.Column(db.String(255), nullable=False, server_default='')
+    token = db.Column(db.String(255), nullable=True)
 
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
@@ -51,22 +52,29 @@ class User(db.Model):
         self.password = utils.hash_password(raw_password)
         self.first_name = first_name
         self.last_name = last_name
+        self.token = ''
         self.roles.append(Role.regular())
 
     def verify_password(self, raw_password):
         return utils.verify_password(raw_password, self.password)
 
-    def generate_rest_auth_token(self, expiration=600):
+    def generate_rest_auth_token(self, expiration=None):
         """
         Generates a token for the user to authenticate on REST requests.
         :return: token for the user to authenticate
         """
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'],
                                             expires_in=expiration)
-        return s.dumps({'id': self.id})
+        self.token = s.dumps({'id': self.id}).decode('utf-8')
+        self.save()
+        return self.token
 
     def update_from_dict(self, new_data):
         return self.update(new_data.get('first_name'), new_data.get('last_name'))
+
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
 
     def update(self, first_name, last_name):
         """
@@ -82,16 +90,27 @@ class User(db.Model):
             raise err
 
     def is_admin(self):
-        return Role.admin() in self.roles
+        return self.has_role(Role.admin())
 
     def is_manager(self):
-        return Role.manager() in self.roles
+        return self.has_role(Role.manager())
 
     def is_regular(self):
-        return Role.regular() in self.roles
+        return self.has_role(Role.regular())
 
-    def has_role(self, role: Role):
+    def has_role(self, role):
         return role in self.roles
+
+    def get_token(self):
+        return self.token
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'token': self.token,
+            'roles': [r.name for r in self.roles],
+            'username': self.username
+        }
 
     @staticmethod
     def get_user_given_rest_token(token):

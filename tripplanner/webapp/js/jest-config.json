@@ -10,17 +10,17 @@
         "json"
     ],
     "transform": {
-        "^.+\\.jsx?$": "babel-jest",
-        ".*\\.vue$": "jest-vue-preprocessor"
+        "^.+\\.js$": "babel-jest",
+        ".*\\.(vue)$": "vue-jest"
     },
     "testRegex": "\\.spec\\.(ts|js)x?$",
     "setupFiles": [
         "<rootDir>/test/jest-pretest.js"
     ],
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
     "collectCoverage": true,
     "collectCoverageFrom": [
-        "src/**/*.{js,ts}",
+        "src/**/*.{vue,js}",
         "!**/*.spec.{js,ts}",
         "!**/node_modules/**",
         "!**/test/**"

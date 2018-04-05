@@ -11,7 +11,6 @@
         },
 
         created() {
-            console.log(this.$login.getUser());
             this.$login.logout();
             this.$router.push({name: 'home'});
         }

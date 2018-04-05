@@ -1,4 +1,3 @@
-import calendar
 import datetime
 import os
 
@@ -6,9 +5,10 @@ from flask import (Blueprint, request, abort, g, jsonify, send_file,
                    send_from_directory)
 
 from tripplanner import db, token_auth, utils
-from tripplanner.auth.decorators import allow_superusers_only, allow_superuser_and_owner
+from tripplanner.auth.decorators import allow_superuser
 from tripplanner.trips.models import Trip
 from tripplanner.errors.validation import ValidationError
+from tripplanner.trips.decorators import accept_json_only
 from tripplanner.users.models import User
 
 core_app = Blueprint('core', __name__)
@@ -19,7 +19,7 @@ WRONG_DATE_ERROR_MSG = 'start_date has the wrong format. Must be dd/mm/YYYY'
 
 @core_app.route('/', defaults={'path': ''})
 @core_app.route('/<path:path>')
-def catch_all(path):
+def catch_all(path=None):
     return send_file('webapp/templates/base.html')
 
 
@@ -35,7 +35,7 @@ def page_not_found(e):
 
 
 @core_app.route('/all_trips/', methods=['GET'])
-@allow_superusers_only
+@allow_superuser
 def get_all_trips():
     trips = Trip.query.all()
 
@@ -74,7 +74,7 @@ def create_trip():
 
 
 @core_app.route('/trips/', methods=['GET'])
-@token_auth.login_required
+@accept_json_only(catch_all, token_auth.login_required)
 def get_all_user_trips():
     user_trips = sorted(g.user.trips, key=lambda x: x.start_date, reverse=True)
     today = datetime.date.today()

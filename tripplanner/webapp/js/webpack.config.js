@@ -1,6 +1,8 @@
 const path = require('path');
 
 module.exports = {
+    watch: true,
+
     entry: {
         main: 'main'
     },
@@ -16,8 +18,7 @@ module.exports = {
         modules: ["src", "node_modules"].map(x => path.resolve(x)),
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
-            'axios$': 'axios/dist/axios.js',
-            'js-cookie$': 'js-cookie/src/js.cookie.js',
+            'axios$': 'axios/dist/axios.js'
         }
     },
 

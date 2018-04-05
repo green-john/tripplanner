@@ -1,4 +1,4 @@
-export class SerializerService {
+export class SerializerUtil {
     encodeCredentialsForBasicAuth(username, password) {
         let userPass = username + ":" + password;
         userPass = btoa(userPass);

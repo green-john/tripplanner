@@ -1,34 +1,45 @@
 
 export class LoginService {
-    constructor(httpService, cookieService, serializerService) {
+    constructor(httpService, storageService, serializerService) {
+        this.TOKEN_KEY = 'authToken';
+
         this.$http = httpService;
         this.$serializer = serializerService;
-        this.$cookie = cookieService;
-        this.userLoggedIn = false;
+        this.$storage = storageService;
         this.userInfo = null;
     }
 
-    // getToken() {
-    //     return this.$cookie.get('authToken');
-    // }
+    getLoggedUser() {
+        if (this.isUserLoggedIn()) {
+            return this.queryUserInfo();
+        }
+        return Promise.resolve(null);
+    }
 
-    // getUserGivenToken(token) {
-    //     return this.$http({
-    //         url: '/user_info',
-    //         method: 'post',
-    //         data: {
-    //             'token': token
-    //         },
-    //         headers: {
-    //             'Authorization': this.getAuthorizationHeader()
-    //         },
-    //     }).then(response => {
-    //         this.saveUser(response.data);
-    //     }).catch(error => {
-    //         this._handleErrors(error);
-    //         throw error;
-    //     });
-    // }
+    isUserLoggedIn() {
+        const token = this.getToken();
+        return token !== null;
+    }
+
+    getToken() {
+        return this.$storage.getItem(this.TOKEN_KEY);
+    }
+
+    queryUserInfo() {
+        return this.$http({
+            url: '/get_info/',
+            method: 'post',
+            headers: {
+                'Authorization': this.getAuthorizationHeader()
+            },
+        }).then(response => {
+            this.cacheUser(response.data);
+            return response.data;
+        }).catch(response => {
+            this._handleErrors(response);
+            throw response;
+        });
+    }
 
     authenticate(username, password) {
         return this.$http({
@@ -36,28 +47,22 @@ export class LoginService {
             method: 'post',
             auth: {username, password},
         }).then(response => {
-            return this.saveUser(response.data);
+            this.cacheUser(response.data);
+            return response.data;
         }).catch(error => {
             this._handleErrors(error);
             throw error;
         });
     }
 
-    saveUser(userData) {
+    cacheUser(userData) {
         this.userInfo = userData;
-        this.$cookie.set('authToken', userData.token);
-        this.userLoggedIn = true;
-        return this.userInfo;
+        this.$storage.setItem(this.TOKEN_KEY, userData.token);
     }
 
     logout() {
-        this.$cookie.remove('authToken');
+        this.$storage.removeItem('authToken');
         this.userInfo = null;
-        this.userLoggedIn = false;
-    }
-
-    isUserLoggedIn() {
-        return (this.userLoggedIn && this.userInfo);
     }
 
     isUserManager() {
@@ -81,11 +86,7 @@ export class LoginService {
             throw Error("User is not logged in");
         }
 
-        return this.$serializer.encodeCredentialsTokenAuth(this.userInfo.token);
-    }
-
-    getUser() {
-        return this.userInfo;
+        return this.$serializer.encodeCredentialsTokenAuth(this.getToken());
     }
 
     _handleErrors(error) {
@@ -96,18 +97,13 @@ export class LoginService {
         if (error.response) {
             // Request made server responded with something other
             // than 2xx
-            console.log('Response:');
-            console.log(error.response);
+            console.log("Response", error.response);
         } else if (error.request) {
             // No response received
-            console.log('Request:');
-            console.log(error.request);
+            console.log('Request:', error.request);
         } else {
             // Weird shit happened
             console.log(error);
         }
-        console.log(error.config);
-
-        throw error;
     }
 }
