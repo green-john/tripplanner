@@ -12,36 +12,22 @@
 </template>
 
 <script>
+    import authMixin from "auth/authCheckMixin";
+    ;
     export default {
         name: 'home-component',
 
-        props: {
-            $login: Object,
-        },
-
-        data() {
-            return {
-                user: null
-            }
-        },
+        mixins: [authMixin],
 
         methods: {
             isAdmin() {
+                // user is added by the mixin
                 if (this.user) {
                     return this.user.roles.indexOf("admin") !== -1;
                 }
                 return false;
             }
         },
-
-        mounted() {
-            this.$login.getLoggedUser().then(userData => {
-                this.user = userData;
-                if (this.user === null) {
-                    this.$router.push({name: 'login'});
-                }
-            });
-        }
     }
 </script>
 

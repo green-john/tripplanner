@@ -125,9 +125,7 @@ class User(db.Model):
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)
-        except SignatureExpired:
-            raise  # re-raise the last exception
-        except BadSignature:
+        except (SignatureExpired, BadSignature):
             return None  # Bad signature. Return None
 
         user = User.query.get(data['id'])

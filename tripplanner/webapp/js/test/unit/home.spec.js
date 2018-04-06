@@ -2,9 +2,9 @@ import { shallow } from '@vue/test-utils';
 import Home from 'home/Home.vue';
 
 const $login = {
-    getLoggedUser() {
-        return Promise.resolve(null);
-    },
+    isUserLoggedIn: jest.fn(),
+    queryUserInfo: jest.fn(),
+    logout: jest.fn()
 };
 
 const $router = {
@@ -20,14 +20,29 @@ function createWrapper($router, $login) {
 }
 
 describe("Home component", () => {
-    test("Mounted with no logged user", done => {
+    beforeEach(() => {
+        jest.clearAllMocks();
+    });
+
+    test("Init with no logged user", async () => {
         // Arrange
+        $login.isUserLoggedIn.mockReturnValue(false);
         // Act
         const wrapper = createWrapper($router, $login);
         // Assert
-        wrapper.vm.$nextTick(() => {
-            expect($router.push).toBeCalledWith({name: "login"});
-            done();
-        });
+        await wrapper.vm.$nextTick();
+        expect($router.push).toBeCalledWith({name: "login"});
     });
+
+    test("Init with expired token", async () => {
+        // Arrange
+        $login.isUserLoggedIn.mockReturnValue(true);
+        $login.queryUserInfo.mockReturnValue(Promise.reject("Error"));
+        // Act
+        const wrapper = createWrapper($router, $login);
+        // Assert
+        await wrapper.vm.$nextTick();
+        expect($router.push).toBeCalledWith({name: "login"});
+        expect($login.logout).toBeCalled();
+    })
 });

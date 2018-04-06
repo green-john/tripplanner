@@ -47,99 +47,86 @@ const MANAGER_USER = {
     id: "userId3"
 };
 
+beforeEach(() => {
+    jest.clearAllMocks();
+    mockCookieService.items = new Map();
+});
 
 describe('Authentication', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-        mockCookieService.items = new Map();
-    });
-
-    test('Auth regular user', done => {
+    test ('Auth regular user', () => {
         // Arrange
         mockHttpService.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        loginService.authenticate("user", "pass").then(userData => {
+        return loginService.authenticate("user", "pass").then(userData => {
             // Assert
             expect(loginService.isUserLoggedIn()).toBeTruthy();
             expect(loginService.isUserManager()).toBeFalsy();
             expect(loginService.isUserAdmin()).toBeFalsy();
             expect(mockCookieService.getItem("authToken")).toBe('user@regular');
 
-            expect(loginService.getLoggedUser()).resolves.toEqual(userData);
-
-            done();
-        }).catch(error => {
-            done.fail(error);
+            return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
         });
     });
 
-    test('Auth admin user', done => {
+    test('Auth admin user', () => {
         // Arrange
         mockHttpService.mockReturnValue(Promise.resolve({data: ADMIN_USER}));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        loginService.authenticate("user", "pass").then(userData => {
+        return loginService.authenticate("user", "pass").then(userData => {
             // Assert
             expect(loginService.isUserLoggedIn()).toBeTruthy();
             expect(loginService.isUserAdmin()).toBeTruthy();
             expect(loginService.isUserManager()).toBeFalsy();
             expect(mockCookieService.getItem("authToken")).toBe('user@admin');
 
-            expect(loginService.getLoggedUser()).resolves.toEqual(userData);
-
-            done();
-        }).catch(error => {
-            done.fail(error);
+            return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
         });
     });
 
-    test('Auth user manager', done => {
+    test('Auth user manager', () => {
         // Arrange
         mockHttpService.mockReturnValue(Promise.resolve({data: MANAGER_USER}));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        loginService.authenticate("user", "pass").then(userData => {
+        return loginService.authenticate("user", "pass").then(userData => {
             // Assert
             expect(loginService.isUserLoggedIn()).toBeTruthy();
             expect(loginService.isUserManager()).toBeTruthy();
             expect(loginService.isUserAdmin()).toBeFalsy();
             expect(mockCookieService.getItem("authToken")).toBe('user@manager');
 
-            expect(loginService.getLoggedUser()).resolves.toEqual(userData);
-
-            done();
-        }).catch(error => {
-            done.fail(error);
+            return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
         });
     });
 
-    test('Error with response', done => {
+    test('Error with response', () => {
         // Arrange
+        expect.assertions(2);
+
         const COMPLETE_ERROR = {
             request: "something",
             response: "Error with the server"
         };
         mockHttpService.mockReturnValue(Promise.reject(COMPLETE_ERROR));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
-        // Act
 
-        loginService.authenticate("user", "asdf").then(() => {
-            done.fail("Should fail");
-        }).catch(error => {
+        // Act
+        return loginService.authenticate("user", "asdf").catch(error => {
             // Assert
             expect(error).toBe(COMPLETE_ERROR);
             expect(loginService.isUserLoggedIn()).toBeFalsy();
-
-            done();
         });
     });
 
-    test('Error with request', done => {
+    test('Error with request', () => {
         // Arrange
+        expect.assertions(2);
+
         const ERROR_NO_RESPONSE = {
             request: "something",
         };
@@ -147,35 +134,27 @@ describe('Authentication', () => {
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        loginService.authenticate("user", "asdf").then(() => {
-            done.fail("Should fail");
-        }).catch((error) => {
+        loginService.authenticate("user", "asdf").catch((error) => {
             // Assert
             expect(error).toBe(ERROR_NO_RESPONSE);
             expect(loginService.isUserLoggedIn()).toBeFalsy();
-
-            done();
         });
     });
 
-    test('Logout', done => {
+    test('Logout', () => {
         // Arrange
         mockHttpService.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        loginService.authenticate("user", "pass").then(() => {
+        return loginService.authenticate("user", "pass").then(() => {
             loginService.logout();
             // Assert
             expect(loginService.isUserLoggedIn()).toBeFalsy();
             expect(loginService.isUserManager()).toBeFalsy();
             expect(loginService.isUserAdmin()).toBeFalsy();
-            expect(loginService.getLoggedUser()).resolves.toBeNull();
             expect(mockCookieService.getItem('authToken')).toBeNull();
-
-            done();
-        }).catch(error => {
-            done.fail(error);
+            expect(() => loginService.getAuthorizationHeader()).toThrow();
         });
     });
 });
@@ -194,7 +173,7 @@ describe('GetAuthorizationHeader', () => {
         }
     });
 
-    test('Regular user logged in', done => {
+    test('Regular user logged in', () => {
         // Arrange
         mockSerializer.encodeCredentialsTokenAuth.mockReturnValue('Token');
         mockHttpService.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
@@ -202,14 +181,11 @@ describe('GetAuthorizationHeader', () => {
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        loginService.authenticate("user", "pass").then(() => {
+        return loginService.authenticate("user", "pass").then(() => {
             const authHeader = loginService.getAuthorizationHeader();
 
             // Assert
             expect(authHeader).toEqual('Token');
-            done();
-        }).catch(error => {
-            done.fail(error);
         });
     });
 });

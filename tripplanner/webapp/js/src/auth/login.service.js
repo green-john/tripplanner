@@ -9,13 +9,6 @@ export class LoginService {
         this.userInfo = null;
     }
 
-    getLoggedUser() {
-        if (this.isUserLoggedIn()) {
-            return this.queryUserInfo();
-        }
-        return Promise.resolve(null);
-    }
-
     isUserLoggedIn() {
         const token = this.getToken();
         return token !== null;
