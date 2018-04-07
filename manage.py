@@ -14,10 +14,6 @@ def make_shell_context():
     return {'app': app, 'db': db}
 
 
-def tests():
-    run('nose2')
-
-
 def js_tests():
     os.chdir('tripplanner/webapp/js')
     run(['./node_modules/.bin/nps', 'test'])
@@ -27,6 +23,11 @@ def all_tests():
     res = run('nose2')
     if res.returncode == 0:
         js_tests()
+
+
+@app.cli.command()
+def tests():
+    run('nose2')
 
 
 @app.cli.command()

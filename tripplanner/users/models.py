@@ -95,6 +95,9 @@ class User(db.Model):
     def is_manager(self):
         return self.has_role(Role.manager())
 
+    def is_superuser(self):
+        return self.is_admin() or self.is_manager()
+
     def is_regular(self):
         return self.has_role(Role.regular())
 
@@ -119,7 +122,6 @@ class User(db.Model):
         raises an error indicating the token is invalid or
         has expired
         :param token: encrypted login token with user id
-        :param expiration: time for which the token is valid
         :return: user with the decrypted id or None if token is invalid
         """
         s = TimedJSONWebSignatureSerializer(current_app.config['SECRET_KEY'])

@@ -23,8 +23,8 @@ def register_user():
 
 
 @user_app.route('/users/<int:_id>/', methods=['GET'])
-@allow_superuser(allow_owner=True)
 @token_auth.login_required
+@allow_superuser(allow_owner=True)
 def get_user(_id):
     user = User.query.get(_id)
     if not user:
@@ -34,8 +34,8 @@ def get_user(_id):
 
 
 @user_app.route('/users/<int:_id>/', methods=['PUT'])
-@allow_superuser(True)
 @token_auth.login_required
+@allow_superuser(True)
 def update_user(_id):
     try:
         user = User.query.get(_id)
@@ -52,8 +52,8 @@ def update_user(_id):
 
 
 @user_app.route('/users/<int:_id>/', methods=['DELETE'])
-@allow_superuser(True)
 @token_auth.login_required
+@allow_superuser(True)
 def delete_user(_id):
     User.query.filter_by(id=_id).delete()
 
@@ -61,8 +61,8 @@ def delete_user(_id):
 
 
 @user_app.route('/users/', methods=['GET'])
-@allow_superuser()
 @token_auth.login_required
+@allow_superuser()
 def all_users():
     users = User.query.all()
     return jsonify([u.as_dict() for u in users])

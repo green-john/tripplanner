@@ -64,7 +64,8 @@ class TestCoreViews(unittest.TestCase):
 
         # Assert
         self.assertEqual(response.status_code, 400)
-        self.assertIn(f"time data '{start_date}' does not match format '{tp_utils.DATE_FORMAT}'", data['error'])
+        self.assertIn(f"time data '{start_date}' does not match format '{tp_utils.DATE_FORMAT}'",
+                      data['error'])
 
     def test_create_trip_by_regular_user_on_behalf_of_other_user_fail(self):
         # Arrange
@@ -137,7 +138,8 @@ class TestCoreViews(unittest.TestCase):
         # Act
         with mock.patch('datetime.date', utils.MockDate):
             utils.MockDate.today = classmethod(lambda cls: today)
-            response = self.client.get('/trips/', headers=headers)
+            response = self.client.get('/trips/', headers=headers,
+                                       content_type="application/json")
 
         # Assert
         self.assertEqual(response.status_code, 200)
@@ -223,7 +225,6 @@ class TestCoreViews(unittest.TestCase):
             response = self.client.post('/trips/filter/', data=json.dumps(query),
                                         headers=headers, content_type='application/json')
 
-
             # Assert
             self.assertEqual(response.status_code, 200)
             data = json.loads(utils.decode_data(response.data))
@@ -255,5 +256,3 @@ class TestCoreViews(unittest.TestCase):
         data = json.loads(utils.decode_data(response.data))
 
         self.assertEqual(len(data), 5)
-
-

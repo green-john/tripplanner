@@ -8,7 +8,6 @@ from tripplanner import db, token_auth, utils
 from tripplanner.auth.decorators import allow_superuser
 from tripplanner.trips.models import Trip
 from tripplanner.errors.validation import ValidationError
-from tripplanner.trips.decorators import accept_json_only
 from tripplanner.users.models import User
 
 core_app = Blueprint('core', __name__)
@@ -74,7 +73,7 @@ def create_trip():
 
 
 @core_app.route('/trips/', methods=['GET'])
-@accept_json_only(catch_all, token_auth.login_required)
+@token_auth.login_required
 def get_all_user_trips():
     user_trips = sorted(g.user.trips, key=lambda x: x.start_date, reverse=True)
     today = datetime.date.today()

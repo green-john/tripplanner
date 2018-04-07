@@ -44,10 +44,10 @@ def encode_info_basic_http_auth(username, password):
 def encode_info_token_http_auth(token):
     """
     Encodes the token to be sent in the Authenticate header.
-    :param token: token to be sent
+    :param token: token to be sent. Assumes the token is already decoded
     :return: the body of the `Authorization` header
     """
-    return ' Token {}'.format(token.decode('ascii'))
+    return ' Token {}'.format(token)
 
 
 def create_user_admin(username='admin', password='admin'):

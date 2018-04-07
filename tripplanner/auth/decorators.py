@@ -10,7 +10,7 @@ def allow_superuser(allow_owner=False):
         def decorated(*args, **kwargs):
             id_ = kwargs.get('_id', '')
             user = g.user
-            if user.is_admin() or (allow_owner and id_ == user.id):
+            if user.is_superuser() or (allow_owner and id_ == user.id):
                 return f(*args, **kwargs)
             else:
                 abort(401)

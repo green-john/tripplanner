@@ -1,8 +1,6 @@
 import time
 import unittest
 
-from itsdangerous import SignatureExpired
-
 from tests import utils
 from tripplanner import db, create_app
 from tripplanner.users.models import User, Role
@@ -46,8 +44,7 @@ class TestUser(unittest.TestCase):
         token = expected_user.generate_rest_auth_token(exp_time)
         time.sleep(2)
 
-        with self.assertRaises(SignatureExpired):
-            User.get_user_given_rest_token(token)
+        self.assertIsNone(User.get_user_given_rest_token(token))
 
     def test_generate_rest_token_bad_token(self):
         actual_user = User.get_user_given_rest_token('phony_token2123345wafweqrfds')
