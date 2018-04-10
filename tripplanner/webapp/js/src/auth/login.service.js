@@ -82,6 +82,13 @@ export class LoginService {
         return this.$serializer.encodeCredentialsTokenAuth(this.getToken());
     }
 
+    getUserId() {
+        if (!this.isUserLoggedIn()) {
+            throw "Users is not logged in";
+        }
+        return this.userInfo["id"];
+    }
+
     _handleErrors(error) {
         this.userLoggedIn = false;
         this.userInfo = null;

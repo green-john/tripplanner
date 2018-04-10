@@ -1,24 +1,16 @@
-<template>
-    <div>
-        <h2>Filter Trips</h2>
-        <form @submit.prevent="filterTrips">
-            <input v-model="filterDestination" placeholder="Destination"><br>
-            <input type="date" v-model="filterStartDate" placeholder="Start Date (dd/mm/yyyy)"><br>
-            <input type="date" v-model="filterEndDate" placeholder="End Date (dd/mm/yyyy)"><br>
+<template lang="pug">
 
-            <button @click.prevent="filterTrips">Get Trips</button>
-        </form>
+    div
+        h2 Filter Trips
+        form(@submit.prevent="filterTrips")
+            input(v-model="filterDestination" placeholder="Destination")
+            input(type="date" v-model="filterStartDate" placeholder="Start Date (dd/mm/yyyy)")
+            input(type="date" v-model="filterEndDate" placeholder="End Date (dd/mm/yyyy)")
 
-        <div>
-            <ul>
-                <li v-for="trip in trips">
-                    <label>
-                        Trip to {{trip.destination}} in {{trip.start_date}}.
-                    </label>
-                </li>
-            </ul>
-        </div>
-    </div>
+            button(@click.prevent="filterTrips") Get Trips
+
+        div
+            trip-list(:trip-list="this.trips")
 </template>
 
 <script>
@@ -28,7 +20,6 @@
         name: 'trip-filter',
 
         props: {
-            $login: Object,
             $trips: Object
         },
 
@@ -39,8 +30,6 @@
                 filterDestination: "",
                 filterStartDate: "",
                 filterEndDate: "",
-
-                user: this.$login.getUser(),
             }
         },
 
@@ -66,16 +55,10 @@
             },
 
             _handleErrors(response) {
-                this.errors = [];
-                const error = response.data.error;
-                if (error) {
-                    this.errors.push(error);
-                }
-                else {
-                    this.errors.push(response);
-                }
+                this.errors = [response.data.error];
             }
         }
     }
 
+    // TODO: display errors
 </script>

@@ -4,8 +4,8 @@ import Axios from 'axios';
 
 import Login from 'auth/Login.vue';
 import Logout from 'auth/Logout.vue';
-import Trips from 'trips/Trips.vue';
-import Home from 'home/Home.vue';
+import Trips from 'trips/tripsPage.component.vue';
+import Home from 'home/home.component.vue';
 import {LoginService} from 'auth/login.service';
 import {SerializerUtil} from 'utils/serializer';
 import {TripService} from "../trips/trips.service";

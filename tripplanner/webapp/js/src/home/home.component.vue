@@ -12,8 +12,8 @@
 </template>
 
 <script>
-    import authMixin from "auth/authCheckMixin";
-    ;
+    import authMixin from "auth/auth.mixin";
+
     export default {
         name: 'home-component',
 

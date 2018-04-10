@@ -65,6 +65,7 @@ describe('Authentication', () => {
             expect(loginService.isUserManager()).toBeFalsy();
             expect(loginService.isUserAdmin()).toBeFalsy();
             expect(mockCookieService.getItem("authToken")).toBe('user@regular');
+            expect(loginService.getUserId()).toBe("userId1");
 
             return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
         });
@@ -82,6 +83,7 @@ describe('Authentication', () => {
             expect(loginService.isUserAdmin()).toBeTruthy();
             expect(loginService.isUserManager()).toBeFalsy();
             expect(mockCookieService.getItem("authToken")).toBe('user@admin');
+            expect(loginService.getUserId()).toBe("userId2");
 
             return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
         });

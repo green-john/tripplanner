@@ -12,6 +12,7 @@ export class TripService {
     }
 
     createTrip(tripData) {
+        tripData.user_id = this.$login.getUserId();
         return this.$http({
             url: '/trips/',
             method: 'post',
