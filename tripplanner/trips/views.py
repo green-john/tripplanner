@@ -33,7 +33,7 @@ def page_not_found(e):
     return send_file('webapp/templates/404.html'), 404
 
 
-@core_app.route('/all_trips/', methods=['GET'])
+@core_app.route('/api/v1/all_trips/', methods=['GET'])
 @allow_superuser
 def get_all_trips():
     trips = Trip.query.all()
@@ -48,7 +48,7 @@ def get_all_trips():
     return jsonify(response)
 
 
-@core_app.route('/trips/', methods=['POST'])
+@core_app.route('/api/v1/trips/', methods=['POST'])
 @token_auth.login_required
 def create_trip():
     user_id = request.get_json().get('user_id')
@@ -72,7 +72,7 @@ def create_trip():
                     'start_date': t.start_date}), 201
 
 
-@core_app.route('/trips/', methods=['GET'])
+@core_app.route('/api/v1/trips/', methods=['GET'])
 @token_auth.login_required
 def get_all_user_trips():
     user_trips = sorted(g.user.trips, key=lambda x: x.start_date, reverse=True)
@@ -87,7 +87,7 @@ def get_all_user_trips():
     return jsonify(response)
 
 
-@core_app.route('/trips/<_id>/', methods=['PUT'])
+@core_app.route('/api/v1/trips/<_id>/', methods=['PUT'])
 @token_auth.login_required
 def modify_trip(_id):
     trip = Trip.query.get(_id)
@@ -109,7 +109,7 @@ def modify_trip(_id):
         return jsonify({'error': ['There was a problem updating the user']}), 400
 
 
-@core_app.route('/trips/filter/', methods=['POST'])
+@core_app.route('/api/v1/trips/filter/', methods=['POST'])
 @token_auth.login_required
 def filter_trips():
     destination = request.get_json().get('destination')
@@ -136,7 +136,7 @@ def filter_trips():
     return jsonify(response)
 
 
-@core_app.route('/trips/next_month/', methods=['GET'])
+@core_app.route('/api/v1/trips/next_month/', methods=['GET'])
 @token_auth.login_required
 def get_trips_next_month():
     today = datetime.date.today()

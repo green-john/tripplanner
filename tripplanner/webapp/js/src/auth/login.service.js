@@ -20,7 +20,7 @@ export class LoginService {
 
     queryUserInfo() {
         return this.$http({
-            url: '/get_info/',
+            url: '/api/v1/get_info/',
             method: 'post',
             headers: {
                 'Authorization': this.getAuthorizationHeader()
@@ -36,7 +36,7 @@ export class LoginService {
 
     authenticate(username, password) {
         return this.$http({
-            url: '/token',
+            url: '/api/v1/token',
             method: 'post',
             auth: {username, password},
         }).then(response => {

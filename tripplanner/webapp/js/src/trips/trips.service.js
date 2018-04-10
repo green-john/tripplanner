@@ -14,7 +14,7 @@ export class TripService {
     createTrip(tripData) {
         tripData.user_id = this.$login.getUserId();
         return this.$http({
-            url: '/trips/',
+            url: '/api/v1/trips/',
             method: 'post',
             data: tripData,
             headers: this.getHeaders()
@@ -27,7 +27,7 @@ export class TripService {
 
     getAllTrips() {
         return this.$http({
-            url: '/trips/',
+            url: '/api/v1/trips/',
             method: 'get',
             headers: this.getHeaders()
         }).then(response => {
@@ -39,7 +39,7 @@ export class TripService {
 
     filterTrips(params) {
         return this.$http({
-            url: '/trips/filter/',
+            url: '/api/v1/trips/filter/',
             method: 'post',
             data: params,
             headers: this.getHeaders()
@@ -52,7 +52,7 @@ export class TripService {
 
     getNextMonthItinerary() {
         return this.$http({
-            url: '/trips/next_month/',
+            url: '/api/v1/trips/next_month/',
             method: 'get',
             headers: this.getHeaders()
         }).then(response => {

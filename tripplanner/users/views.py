@@ -8,7 +8,7 @@ from tripplanner.users.models import User
 user_app = Blueprint('user', __name__)
 
 
-@user_app.route('/users/', methods=['POST'])
+@user_app.route('/api/v1/users/', methods=['POST'])
 def register_user():
     user = None
     try:
@@ -22,7 +22,7 @@ def register_user():
         return jsonify(user.as_dict()), 201
 
 
-@user_app.route('/users/<int:_id>/', methods=['GET'])
+@user_app.route('/api/v1/users/<int:_id>/', methods=['GET'])
 @token_auth.login_required
 @allow_superuser(allow_owner=True)
 def get_user(_id):
@@ -33,7 +33,7 @@ def get_user(_id):
     return jsonify(user.as_dict())
 
 
-@user_app.route('/users/<int:_id>/', methods=['PUT'])
+@user_app.route('/api/v1/users/<int:_id>/', methods=['PUT'])
 @token_auth.login_required
 @allow_superuser(True)
 def update_user(_id):
@@ -51,7 +51,7 @@ def update_user(_id):
     return jsonify(user.as_dict()), 204
 
 
-@user_app.route('/users/<int:_id>/', methods=['DELETE'])
+@user_app.route('/api/v1/users/<int:_id>/', methods=['DELETE'])
 @token_auth.login_required
 @allow_superuser(True)
 def delete_user(_id):
@@ -60,7 +60,7 @@ def delete_user(_id):
     return jsonify({}), 204
 
 
-@user_app.route('/users/', methods=['GET'])
+@user_app.route('/api/v1/users/', methods=['GET'])
 @token_auth.login_required
 @allow_superuser()
 def all_users():
@@ -68,14 +68,14 @@ def all_users():
     return jsonify([u.as_dict() for u in users])
 
 
-@user_app.route('/get_info/', methods=['POST'])
+@user_app.route('/api/v1/get_info/', methods=['POST'])
 @token_auth.login_required
 @allow_superuser(True)
 def get_user_given_token():
     return jsonify(g.user.as_dict())
 
 
-@user_app.route('/token/', methods=['POST'])
+@user_app.route('/api/v1/token/', methods=['POST'])
 @basic_auth.login_required
 def get_token():
     g.user.generate_rest_auth_token()

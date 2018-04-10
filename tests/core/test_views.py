@@ -38,7 +38,7 @@ class TestCoreViews(unittest.TestCase):
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
 
         # Act
-        response = self.client.post('/trips/', data=json.dumps(trip_dict),
+        response = self.client.post('/api/v1/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
         # Assert
@@ -58,7 +58,7 @@ class TestCoreViews(unittest.TestCase):
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
 
         # Act
-        response = self.client.post('/trips/', data=json.dumps(trip_dict),
+        response = self.client.post('/api/v1/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
         data = json.loads(utils.decode_data(response.data))
 
@@ -78,7 +78,7 @@ class TestCoreViews(unittest.TestCase):
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
 
         # Act
-        response = self.client.post('/trips/', data=json.dumps(trip_dict),
+        response = self.client.post('/api/v1/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
         # Assert
@@ -95,7 +95,7 @@ class TestCoreViews(unittest.TestCase):
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
 
         # Act
-        response = self.client.post('/trips/', data=json.dumps(trip_dict),
+        response = self.client.post('/api/v1/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
         # Assert
@@ -112,7 +112,7 @@ class TestCoreViews(unittest.TestCase):
         headers = {'Authorization': utils.encode_info_token_http_auth(token)}
 
         # Act
-        response = self.client.post('/trips/', data=json.dumps(trip_dict),
+        response = self.client.post('/api/v1/trips/', data=json.dumps(trip_dict),
                                     headers=headers, content_type='application/json')
 
         # Assert
@@ -138,7 +138,7 @@ class TestCoreViews(unittest.TestCase):
         # Act
         with mock.patch('datetime.date', utils.MockDate):
             utils.MockDate.today = classmethod(lambda cls: today)
-            response = self.client.get('/trips/', headers=headers,
+            response = self.client.get('/api/v1/trips/', headers=headers,
                                        content_type="application/json")
 
         # Assert
@@ -172,7 +172,7 @@ class TestCoreViews(unittest.TestCase):
             query = {'destination': dest}
 
             # Act
-            response = self.client.post('/trips/filter/', data=json.dumps(query),
+            response = self.client.post('/api/v1/trips/filter/', data=json.dumps(query),
                                         headers=headers, content_type='application/json')
 
             # Assert
@@ -197,7 +197,7 @@ class TestCoreViews(unittest.TestCase):
             query = {'start_date': start_date}
 
             # Act
-            response = self.client.post('/trips/filter/', data=json.dumps(query),
+            response = self.client.post('/api/v1/trips/filter/', data=json.dumps(query),
                                         headers=headers, content_type='application/json')
 
             # Assert
@@ -222,7 +222,7 @@ class TestCoreViews(unittest.TestCase):
             query = {'end_date': end_date}
 
             # Act
-            response = self.client.post('/trips/filter/', data=json.dumps(query),
+            response = self.client.post('/api/v1/trips/filter/', data=json.dumps(query),
                                         headers=headers, content_type='application/json')
 
             # Assert
@@ -249,7 +249,7 @@ class TestCoreViews(unittest.TestCase):
             utils.create_and_save_trip('TEST', today, today, 'TEST', user_admin)
 
         # Act
-        response = self.client.get('/trips/next_month/', headers=headers)
+        response = self.client.get('/api/v1/trips/next_month/', headers=headers)
 
         # Assert
         self.assertEqual(response.status_code, 200)

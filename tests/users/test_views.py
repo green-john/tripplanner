@@ -29,7 +29,7 @@ class TestUserViews(unittest.TestCase):
                 'last_name': 'Er'}
 
         # Act
-        response = self.client.post('/users/', data=json.dumps(user),
+        response = self.client.post('/api/v1/users/', data=json.dumps(user),
                                     content_type='application/json')
 
         # Assert
@@ -48,7 +48,7 @@ class TestUserViews(unittest.TestCase):
     def test_register_user_incomplete_data(self, user_data, status_code):
         # Arrange
         # Act
-        response = self.client.post('/users/', data=json.dumps(user_data),
+        response = self.client.post('/api/v1/users/', data=json.dumps(user_data),
                                     content_type='application/json')
 
         # Assert
@@ -60,7 +60,7 @@ class TestUserViews(unittest.TestCase):
         auth_header = utils.encode_info_basic_http_auth(user.username, 'pass1')
 
         # Act
-        response = self.client.post('/token/', headers={
+        response = self.client.post('/api/v1/token/', headers={
             'Authorization': auth_header
         })
         decoded_data = utils.decode_data(response.data)
@@ -74,7 +74,7 @@ class TestUserViews(unittest.TestCase):
         auth_header = utils.encode_info_basic_http_auth(user.username, 'wrongPass')
 
         # Act
-        response = self.client.post('/token/', headers={
+        response = self.client.post('/api/v1/token/', headers={
             'Authorization': auth_header
         })
 
@@ -92,7 +92,7 @@ class TestUserViews(unittest.TestCase):
         token = admin.generate_rest_auth_token()
 
         # Act
-        response = self.client.get('/users/', headers={
+        response = self.client.get('/api/v1/users/', headers={
             'Authorization': utils.encode_info_token_http_auth(token)
         })
 
@@ -110,7 +110,7 @@ class TestUserViews(unittest.TestCase):
         token = users[0].generate_rest_auth_token()
 
         # Act
-        response = self.client.get('/users/', headers={
+        response = self.client.get('/api/v1/users/', headers={
             'Authorization': utils.encode_info_token_http_auth(token)
         })
 
@@ -123,7 +123,7 @@ class TestUserViews(unittest.TestCase):
         token = u.generate_rest_auth_token()
 
         # Act
-        response = self.client.get('/users/{}/'.format(u.id), headers={
+        response = self.client.get('/api/v1/users/{}/'.format(u.id), headers={
             'Authorization': utils.encode_info_token_http_auth(token)
         })
 
@@ -139,7 +139,7 @@ class TestUserViews(unittest.TestCase):
         token = m.generate_rest_auth_token()
 
         # Act
-        response = self.client.get('/users/{}/'.format(u.id), headers={
+        response = self.client.get('/api/v1/users/{}/'.format(u.id), headers={
             'Authorization': utils.encode_info_token_http_auth(token)
         })
 
@@ -155,7 +155,7 @@ class TestUserViews(unittest.TestCase):
         token = u1.generate_rest_auth_token()
 
         # Act
-        response = self.client.get('/users/{}/'.format(u2.id), headers={
+        response = self.client.get('/api/v1/users/{}/'.format(u2.id), headers={
             'Authorization': utils.encode_info_token_http_auth(token)
         })
 
@@ -180,7 +180,7 @@ class TestUserViews(unittest.TestCase):
                            'last_name': new_last_name}
 
             # Act
-            response = self.client.put('/users/{}/'.format(actual_u.id),
+            response = self.client.put('/api/v1/users/{}/'.format(actual_u.id),
                                        data=json.dumps(update_data),
                                        content_type='application/json',
                                        headers=headers)
@@ -204,7 +204,7 @@ class TestUserViews(unittest.TestCase):
 
         for actual_u in [u1, u2]:
             # Act
-            response = self.client.delete('/users/{}/'.format(actual_u.id),
+            response = self.client.delete('/api/v1/users/{}/'.format(actual_u.id),
                                           headers=headers)
             # Assert
             self.assertEqual(response.status_code, 204)
