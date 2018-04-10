@@ -14,7 +14,8 @@
 </template>
 
 <script>
-    import {formatDate} from 'utils/dates';
+    import { formatDate } from 'utils/dates';
+    import TripList from 'trips/tripList.component';
 
     export default {
         name: 'trip-filter',
@@ -31,6 +32,10 @@
                 filterStartDate: "",
                 filterEndDate: "",
             }
+        },
+
+        components: {
+            'trip-list': TripList
         },
 
         methods: {

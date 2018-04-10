@@ -1,6 +1,5 @@
 <template lang="pug">
     section
-        router-link#logout(:to="{name: 'logout'}") Logout
         div(v-if="user")
             p Welcome {{user.username}}. This is your home.
 
@@ -40,12 +39,6 @@
         a {
             color: white;
             text-decoration: none;
-
-            &#logout {
-                top: 5px;
-                right: 5px;
-                position: absolute;
-            }
         }
 
         ul {

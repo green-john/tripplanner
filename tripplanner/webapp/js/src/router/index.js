@@ -51,7 +51,6 @@ const routerConfig = {
             name: 'trips',
             component: Trips,
             props: {
-                $login: loginService,
                 $trips: tripService
             }
         },

@@ -4,16 +4,16 @@
           p.individualError(v-for="error in errors") {{ error }}
 
       div.create-trip
-          create-trip(:$trips=this.$trips)
+          create-trip(:$trips="this.$trips")
 
       div.trip-list
           trip-list(:trip-list="tripList")
 
       div.trip-filter
-          trip-filter(:$trips=this.$trips)
+          trip-filter(:$trips="this.$trips")
 
       div.upcoming-trips
-         upcoming-trips(:$trips=this.$trips)
+          upcoming-trips(:$trips="this.$trips")
 </template>
 
 <script>

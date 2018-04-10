@@ -7,8 +7,10 @@
 </template>
 
 <script>
+    import TripList from "trips/tripList.component";
+
     export default {
-        name: 'upcoming-trips',
+        name: "upcoming-trips",
 
         props: {
             $trips: Object
@@ -19,6 +21,10 @@
                 errors: [],
                 nextMonthTrips: [],
             }
+        },
+
+        components: {
+            'trip-list': TripList
         },
 
         methods: {
