@@ -53,57 +53,54 @@ beforeEach(() => {
 });
 
 describe('Authentication', () => {
-    test ('Auth regular user', () => {
+    test ('Auth regular user', async () => {
         // Arrange
         mockHttpService.mockReturnValue(Promise.resolve({data: REGULAR_USER}));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        return loginService.authenticate("user", "pass").then(userData => {
+        const userData = await loginService.authenticate("user", "pass");
             // Assert
-            expect(loginService.isUserLoggedIn()).toBeTruthy();
-            expect(loginService.isUserManager()).toBeFalsy();
-            expect(loginService.isUserAdmin()).toBeFalsy();
-            expect(mockCookieService.getItem("authToken")).toBe('user@regular');
-            expect(loginService.getUserId()).toBe("userId1");
-
-            return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
-        });
+        expect(loginService.isUserLoggedIn()).toBeTruthy();
+        expect(loginService.isUserManager()).toBeFalsy();
+        expect(loginService.isUserAdmin()).toBeFalsy();
+        expect(mockCookieService.getItem("authToken")).toBe('user@regular');
+        expect(loginService.getUserId()).toBe("userId1");
+        expect(await loginService.isTokenValid()).toBeTruthy();
+        expect(await loginService.queryUserInfo()).toEqual(userData);
     });
 
-    test('Auth admin user', () => {
+    test('Auth admin user', async () => {
         // Arrange
         mockHttpService.mockReturnValue(Promise.resolve({data: ADMIN_USER}));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        return loginService.authenticate("user", "pass").then(userData => {
+        const userData = await loginService.authenticate("user", "pass");
             // Assert
-            expect(loginService.isUserLoggedIn()).toBeTruthy();
-            expect(loginService.isUserAdmin()).toBeTruthy();
-            expect(loginService.isUserManager()).toBeFalsy();
-            expect(mockCookieService.getItem("authToken")).toBe('user@admin');
-            expect(loginService.getUserId()).toBe("userId2");
-
-            return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
-        });
+        expect(loginService.isUserLoggedIn()).toBeTruthy();
+        expect(loginService.isUserAdmin()).toBeTruthy();
+        expect(loginService.isUserManager()).toBeFalsy();
+        expect(mockCookieService.getItem("authToken")).toBe('user@admin');
+        expect(loginService.getUserId()).toBe("userId2");
+        expect(await loginService.isTokenValid()).toBeTruthy();
+        expect(await loginService.queryUserInfo()).toEqual(userData);
     });
 
-    test('Auth user manager', () => {
+    test('Auth user manager', async () => {
         // Arrange
         mockHttpService.mockReturnValue(Promise.resolve({data: MANAGER_USER}));
         const loginService = new LoginService(mockHttpService, mockCookieService, mockSerializer);
 
         // Act
-        return loginService.authenticate("user", "pass").then(userData => {
+        const userData = await loginService.authenticate("user", "pass");
             // Assert
-            expect(loginService.isUserLoggedIn()).toBeTruthy();
-            expect(loginService.isUserManager()).toBeTruthy();
-            expect(loginService.isUserAdmin()).toBeFalsy();
-            expect(mockCookieService.getItem("authToken")).toBe('user@manager');
-
-            return expect(loginService.queryUserInfo()).resolves.toEqual(userData);
-        });
+        expect(loginService.isUserLoggedIn()).toBeTruthy();
+        expect(loginService.isUserManager()).toBeTruthy();
+        expect(loginService.isUserAdmin()).toBeFalsy();
+        expect(mockCookieService.getItem("authToken")).toBe('user@manager');
+        expect(await loginService.isTokenValid()).toBeTruthy();
+        expect(await loginService.queryUserInfo()).toEqual(userData);
     });
 
     test('Error with response', () => {

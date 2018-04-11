@@ -22,8 +22,9 @@ const tripService = new TripService(httpService, loginService);
 
 Vue.use(Router);
 
-const routerConfig = {
+const router = new Router({
     mode: 'history',
+    hashbang: false,
 
     routes: [
         {
@@ -36,6 +37,9 @@ const routerConfig = {
             component: Home,
             props: {
                 $login: loginService
+            },
+            meta: {
+                requiresAuth: true
             }
         },
         {
@@ -51,7 +55,11 @@ const routerConfig = {
             name: 'trips',
             component: Trips,
             props: {
+                $login: loginService,
                 $trips: tripService
+            },
+            meta: {
+                requiresAuth: true
             }
         },
         {
@@ -63,6 +71,21 @@ const routerConfig = {
             }
         }
     ],
-};
+});
 
-export default new Router(routerConfig);
+router.beforeEach(async (to, from, next) => {
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+        const valid = await loginService.isTokenValid();
+        if (!valid) {
+            loginService.logout();
+            next({
+                path: "/login",
+                query: { redirect: to.fullPath }
+            });
+            return;
+        }
+    }
+    next();
+});
+
+export default router;

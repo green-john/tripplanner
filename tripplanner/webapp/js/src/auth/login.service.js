@@ -89,6 +89,17 @@ export class LoginService {
         return this.userInfo["id"];
     }
 
+    isTokenValid() {
+        if (this.isUserLoggedIn()) {
+            return this.queryUserInfo().then(() => {
+                return true;
+            }).catch(() => {
+                return false;
+            })
+        }
+        return Promise.resolve(false);
+    }
+
     _handleErrors(error) {
         this.userLoggedIn = false;
         this.userInfo = null;

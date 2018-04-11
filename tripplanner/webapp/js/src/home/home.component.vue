@@ -11,22 +11,25 @@
 </template>
 
 <script>
-    import authMixin from "auth/auth.mixin";
-
     export default {
         name: 'home-component',
 
-        mixins: [authMixin],
+        props: {
+            $login: Object
+        },
 
         methods: {
             isAdmin() {
                 // user is added by the mixin
-                if (this.user) {
-                    return this.user.roles.indexOf("admin") !== -1;
-                }
-                return false;
+                return this.$login.isUserAdmin();
             }
         },
+
+        computed: {
+            user() {
+                return this.$login.userInfo;
+            }
+        }
     }
 </script>
 
