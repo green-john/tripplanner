@@ -3,17 +3,15 @@
       div.errors
           p.individualError(v-for="error in errors") {{ error }}
 
-      div.create-trip
-          create-trip(:$trips="this.$trips")
-
-      div.trip-list
-          trip-list(:trip-list="tripList")
-
+      // The trip filter already contains a trip list
       div.trip-filter
           trip-filter(:$trips="this.$trips")
 
       div.upcoming-trips
           upcoming-trips(:$trips="this.$trips")
+
+      div.create-trip
+          create-trip(:$trips="this.$trips")
 </template>
 
 <script>
@@ -21,12 +19,9 @@
     import TripFilter from 'trips/tripFilter.component';
     import UpcomingTrips from 'trips/upcomingTrips.component';
     import CreateTrip from 'trips/createTrip.component';
-    import AuthCheck from 'auth/auth.mixin';
 
     export default {
         name: 'trips',
-
-        mixin: [AuthCheck],
 
         props: {
             $trips: Object
@@ -74,21 +69,22 @@
     };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
     section {
-        display: flex;
-        flex-wrap: wrap;
-    }
+        display: grid;
+        padding: 1rem;
 
-    section > article:first-child {
-        width: 100%;
-    }
+        div.trip-filter {
+            width: 100%;
+        }
 
-    section > article:not(:first-child) {
-        flex: 1;
-    }
+        div.create-trip {
+            $div-width: 15rem;
+            $div-offset: -($div-width + 1rem);
 
-    ul {
-        list-style: none;
+            position: fixed;
+            right: $div-offset;
+            width: $div-width;
+        }
     }
 </style>

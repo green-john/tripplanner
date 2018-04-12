@@ -1,3 +1,5 @@
+import datetime
+
 from tripplanner import db, utils
 from tripplanner.errors.validation import ValidationError
 from tripplanner.users.models import User
@@ -43,6 +45,21 @@ class Trip(db.Model):
             self.comment = comment
         except ValidationError as err:
             raise err
+
+    def as_dict(self):
+        data = {
+            'id': self.id,
+            'destination': self.destination,
+            'start_date': utils.print_date(self.start_date),
+            'end_date': utils.print_date(self.end_date),
+            'comment': self.comment
+        }
+
+        today = datetime.date.today()
+        if self.start_date > today:
+            data['days_left'] = (self.start_date - today).days
+
+        return data
 
     @staticmethod
     def validate_data(destination, start_date, end_date):

@@ -12,7 +12,9 @@ describe("Trip Component", () => {
 
         // Act
         const wrapper = shallow(TripComponent, {
-            propsData: tripData
+            propsData: {
+                trip: tripData
+            }
         });
 
         // Assert
@@ -31,7 +33,9 @@ describe("Trip Component", () => {
 
         // Act
         const wrapper = shallow(TripComponent, {
-            propsData: tripData
+            propsData: {
+                trip: tripData
+            }
         });
 
         // Assert

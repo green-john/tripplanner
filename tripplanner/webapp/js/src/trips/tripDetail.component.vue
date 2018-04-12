@@ -1,7 +1,7 @@
 <template lang="pug">
     div.trip
-        label Trip to {{destination}} in {{start_date}}.
-        label.days-left(v-if="days_left") {{days_left}} day(s) left.
+        label Trip to {{trip.destination}} in {{trip.start_date}}.
+        label.days-left(v-if="trip.days_left") {{trip.days_left}} day(s) left.
         label.overdue(v-else) Overdue.
 
 </template>
@@ -11,9 +11,7 @@
         name: "trip-detail",
 
         props: {
-            destination: String,
-            start_date: String,
-            days_left: Number,
+            trip: Object
         }
     }
 </script>

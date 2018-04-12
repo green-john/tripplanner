@@ -27,7 +27,4 @@
             position: absolute;
         }
     }
-
-
 </style>
-

@@ -75,6 +75,30 @@
     // TODO: Display the errors
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    $bg-color: #32414d;
 
+    div {
+        background: #fff;
+
+        form {
+            display: grid;
+
+            & > * {
+                display: block;
+                font-size: 1rem;
+                height: 2rem;
+                margin: .3rem;
+            }
+
+            button {
+                background-color: $bg-color;
+                border-radius: .3rem;
+                color: #fff;
+                /*display: inline-block;*/
+                /*padding: .5rem;*/
+                /*margin: 0 .4rem;*/
+            }
+        }
+    }
 </style>

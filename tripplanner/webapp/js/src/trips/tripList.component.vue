@@ -1,9 +1,7 @@
 <template lang="pug">
-    div
-        h2 Trip List
-        ul
-            li(v-for="trip in tripList" :key="trip.id" )
-                trip-detail(:data="trip")
+    ul
+        li(v-for="trip in tripList" :key="trip.id" )
+            trip-detail(:trip="trip")
 </template>
 
 <script>
@@ -22,6 +20,12 @@
     }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
+    $bg-color: #32414d;
 
+    ul {
+        li {
+            color: $bg-color;
+        }
+    }
 </style>

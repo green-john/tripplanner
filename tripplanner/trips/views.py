@@ -40,10 +40,7 @@ def get_all_trips():
 
     response = []
     for t in trips:
-        response.append({'id': t.id, 'destination': t.destination,
-                         'start_date': utils.print_date(t.start_date),
-                         'end_date': utils.print_date(t.end_date),
-                         'comment': t.comment})
+        response.append(t.as_dict())
 
     return jsonify(response)
 
@@ -68,21 +65,16 @@ def create_trip():
     except ValidationError as err:
         return jsonify({'error': err.get_error_message()}), 400
 
-    return jsonify({'id': t.id, 'destination': t.destination,
-                    'start_date': t.start_date}), 201
+    return jsonify(t.as_dict()), 201
 
 
 @core_app.route('/api/v1/trips/', methods=['GET'])
 @token_auth.login_required
 def get_all_user_trips():
     user_trips = sorted(g.user.trips, key=lambda x: x.start_date, reverse=True)
-    today = datetime.date.today()
     response = []
-    for r in user_trips:
-        response.append({'id': r.id, 'destination': r.destination,
-                         'start_date': utils.print_date(r.start_date)})
-        if r.start_date > today:
-            response[-1]['days_left'] = (r.start_date - today).days
+    for t in user_trips:
+        response.append(t.as_dict())
 
     return jsonify(response)
 
@@ -98,10 +90,7 @@ def modify_trip(_id):
         trip.update_from_dict(request.get_json())
         db.session.add(trip)
         db.session.commit()
-        return jsonify({'id': trip.id, 'destination': trip.destination,
-                        'start_date': utils.print_date(trip.start_date),
-                        'end_date': utils.print_date(trip.end_date),
-                        'comment': trip.comment}), 204
+        return jsonify(trip.as_dict()), 204
     except ValidationError as err:
         return jsonify({'error': [f'Error validating input data: {err.get_error_message()}']}), 400
     except:
@@ -128,10 +117,7 @@ def filter_trips():
 
     response = []
     for t in trips.all():
-        response.append({'id': t.id, 'destination': t.destination,
-                         'start_date': utils.print_date(t.start_date),
-                         'end_date': utils.print_date(t.end_date),
-                         'comment': t.comment})
+        response.append(t.as_dict())
 
     return jsonify(response)
 
@@ -147,10 +133,7 @@ def get_trips_next_month():
 
     response = []
     for t in trips.all():
-        response.append({'id': t.id, 'destination': t.destination,
-                         'start_date': utils.print_date(t.start_date),
-                         'end_date': utils.print_date(t.end_date),
-                         'comment': t.comment})
+        response.append(t.as_dict())
     return jsonify(response)
 
 
@@ -162,8 +145,5 @@ def _is_authorised(user_id: str):
 TODO
 
 * Create error page for bad authentication.
-* Do role checking with decorators instead of if/elses
-* For create_trip improve validation. Maybe add a method to the Trip class.
-* Change GET /trips to return all trips and create a new endpoint to return the upcoming trips
 * Abstract check for user editing their own trips into a decorator.
 """
