@@ -26,7 +26,7 @@ describe("Create Trip component", () => {
 
         // Assert
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.status).toBe("Trip created!");
+        expect(wrapper.vm.successMsg).toBe("Trip to a created!");
     });
 
     test("Create trip service fails", async () => {
@@ -49,7 +49,7 @@ describe("Create Trip component", () => {
 
         // Assert
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.status).toBe("Error creating trip");
+        expect(wrapper.vm.errorMsg).toBe("Error creating trip");
         expect(wrapper.vm.errors).toHaveLength(1);
     });
 

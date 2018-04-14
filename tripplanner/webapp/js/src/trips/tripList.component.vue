@@ -21,11 +21,19 @@
 </script>
 
 <style lang="scss" scoped>
-    $bg-color: #32414d;
+    @import "~style/globals";
 
     ul {
+        list-style: none;
+
         li {
-            color: $bg-color;
+            border-bottom: 1px solid #ddd;
+            border-right: 1px solid #ddd;
+            border-left: 1px solid #ddd;
+
+            &:first-of-type {
+                border-top: 1px solid #ddd;
+            }
         }
     }
 </style>

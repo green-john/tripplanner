@@ -52,12 +52,14 @@ class Trip(db.Model):
             'destination': self.destination,
             'start_date': utils.print_date(self.start_date),
             'end_date': utils.print_date(self.end_date),
-            'comment': self.comment
+            'comment': self.comment,
         }
 
         today = datetime.date.today()
-        if self.start_date > today:
+        if today < self.start_date:
             data['days_left'] = (self.start_date - today).days
+        elif today < self.end_date:
+            data['in_progress'] = True
 
         return data
 

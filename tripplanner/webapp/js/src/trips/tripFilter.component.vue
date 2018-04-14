@@ -1,13 +1,13 @@
 <template lang="pug">
     div
-        h2 Filter Trips
         div.filter-table
             form(@submit.prevent="filterTrips")
-                input(v-model="filterDestination" placeholder="Destination")
-                input(type="date" v-model="filterStartDate" placeholder="Start Date (dd/mm/yyyy)")
-                input(type="date" v-model="filterEndDate" placeholder="End Date (dd/mm/yyyy)")
+                input(id="startDate" type="date" value="Start date" v-model="filterStartDate" placeholder="Start Date (dd/mm/yyyy)")
+                input(id ="endDate" type="date" v-model="filterEndDate" placeholder="End Date (dd/mm/yyyy)")
+                input(id="destination" v-model="filterDestination" placeholder="Destination")
 
-                button(@click.prevent="filterTrips") Get Trips
+                button(id="filterBtn" @click.prevent="filterTrips")
+                    span.fas.fa-filter
 
             trip-list(:trip-list="this.trips")
 </template>
@@ -62,6 +62,10 @@
             _handleErrors(response) {
                 this.errors = [response.data.error];
             }
+        },
+
+        mounted() {
+            this.filterTrips();
         }
     }
 
@@ -69,29 +73,33 @@
 </script>
 
 <style lang="scss" scoped>
-    $gray-border: rgba(203,203,210,0.4);
+    @import "~style/globals";
 
     div {
         div.filter-table {
-            background-color: #fff;
-            display: grid;
-            grid-template-rows: 1fr 5fr;
 
             form {
-                display: flex;
-                flex-wrap: wrap;
-
-                & > * {
-                    flex: 1;
-                }
+                display: grid;
+                grid-auto-flow: column;
 
                 input {
-                    border: 2px solid $gray-border;
-                    border-radius: .3rem;
-                    box-shadow: inset 0 1px 2px $gray-border;
-                    font-size: 1rem;
+                    background: none;
+                    border: none;
+                    border-left: 1px solid #bbb;
+                    border-top: 1px solid #bbb;
+                    font-size: .9rem;
                     height: 2rem;
+                    padding: .2rem;
                     outline: none;
+
+                    &:last-of-type {
+                        border-right: 1px solid #bbb;
+                    }
+                }
+
+                button {
+                    font-size: .8rem;
+                    padding: 0 .5rem;
                 }
             }
         }

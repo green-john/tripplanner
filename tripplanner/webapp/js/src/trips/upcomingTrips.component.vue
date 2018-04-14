@@ -47,3 +47,20 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    div {
+        display: grid;
+
+        h2 {
+            padding-bottom: .3rem;
+        }
+
+        button {
+            margin-top: .3rem;
+            justify-self: end;
+            padding: .6rem;
+        }
+    }
+
+</style>

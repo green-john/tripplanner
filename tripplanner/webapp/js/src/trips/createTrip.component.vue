@@ -1,12 +1,21 @@
 <template lang="pug">
     div
         h2 Create Trip
-        label.status(v-model="status") &nbsp;
+
+        transition
+            label.status.success(v-if="successMsg") {{ successMsg }}
+
+        transition
+            label.status.error(v-if="errorMsg") {{ errorMsg }}
         form(@submit.prevent="createTrip")
-            input(v-model="destination" placeholder="Destination")
-            input(type="date", placeholder="Start Date (dd/mm/yyyy)" v-model="start_date")
-            input(type="date", placeholder="End Date (dd/mm/yyyy)" v-model="end_date")
-            input(v-model="comment" placeholder="Comment")
+            label(for="destination") Destination
+            input(id="destination" v-model="destination" placeholder="Destination")
+            label(for="startDate") Start:
+            input(id="startDate" type="date", placeholder="Start Date (dd/mm/yyyy)" v-model="start_date")
+            label(for="endDate") End:
+            input(id="endDate" type="date", placeholder="End Date (dd/mm/yyyy)" v-model="end_date")
+            label(for="comment") Comments
+            textarea(id="comment" v-model="comment" placeholder='asdf')
 
             button(@click.prevent="createTrip") Create Trip
 </template>
@@ -28,13 +37,15 @@
                 end_date: "",
                 comment: "",
 
-                status: "",
+                successMsg: null,
+                errorMsg: null,
                 errors: []
             }
         },
 
         methods: {
             createTrip() {
+                this.errorMsg = this.successMsg = null;
                 const tripData = Object.create(null);
                 tripData.destination = this.destination;
                 tripData.start_date = formatDate(this.start_date);
@@ -42,14 +53,20 @@
                 tripData.comment = this.comment;
 
                 if (!this._validateFields(tripData)) {
-                    this.status = "Error creating trip";
+                    this.errorMsg = this.errors.reduce((acc, currentVal) => {
+                        return acc + "\n" + currentVal;
+                    });
                     return;
                 }
 
                 this.$trips.createTrip(tripData).then(() => {
-                    this.status = "Trip created!";
+                    this.successMsg = "Trip to " + this.destination + " created!";
+                    this.destination = "";
+                    this.start_date = "";
+                    this.end_date = "";
+                    this.comment = "";
                 }).catch(response => {
-                    this.status = "Error creating trip";
+                    this.errorMsg = "Error creating trip";
                     this._handleErrors(response);
                 });
             },
@@ -66,6 +83,7 @@
             },
 
             _handleErrors(response) {
+                console.log(response);
                 this.errors = [response.data.error];
             }
         }
@@ -76,29 +94,74 @@
 </script>
 
 <style lang="scss" scoped>
-    $bg-color: #32414d;
+    @import "~style/globals";
 
     div {
+        border-radius: .3rem;
         background: #fff;
+
+        h2 {
+            padding: .5rem;
+        }
+
+        label.status {
+            border-radius: .2rem;
+            color: white;
+            display: block;
+            margin: 0 .7rem;
+            padding: .3rem;
+            text-align: center;
+            white-space: pre;
+        }
+
+        label.error {
+            background-color: #ff686d;
+        }
+
+        label.success {
+            background-color: $grass-color;
+        }
 
         form {
             display: grid;
+            grid-template-columns: auto 1fr;
+            padding: .3rem;
 
-            & > * {
-                display: block;
-                font-size: 1rem;
+            label, input, textarea {
                 height: 2rem;
-                margin: .3rem;
+                margin: .2rem;
+                padding: .2rem;
+            }
+
+            input {
+                border: 1px solid #ddd;
+                font-size: 1rem;
+            }
+
+            textarea {
+                border: 1px solid #ddd;
+                font-size: 1rem;
+                height: 4rem;
             }
 
             button {
-                background-color: $bg-color;
+                background-color: $color1;
                 border-radius: .3rem;
                 color: #fff;
-                /*display: inline-block;*/
-                /*padding: .5rem;*/
-                /*margin: 0 .4rem;*/
+                font-size: 1rem;
+                grid-column: 1 / -1;
+                height: 3rem;
+                margin-top: .2rem;
+                padding: .5rem;
             }
         }
+    }
+
+    .success-enter-active, .success-leave-active {
+        transition: opacity .3s ease;
+    }
+
+    .success-enter, .success-leave-to {
+        opacity: 0;
     }
 </style>

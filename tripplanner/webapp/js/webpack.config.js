@@ -14,11 +14,12 @@ module.exports = {
     },
 
     resolve: {
-        extensions: [".js", ".vue"],
-        modules: ["src", "node_modules"].map(x => path.resolve(x)),
+        extensions: ['.js', '.vue', '.scss'],
+        modules: ['src', 'node_modules', 'styles'].map(x => path.resolve(x)),
         alias: {
             'vue$': 'vue/dist/vue.esm.js',
-            'axios$': 'axios/dist/axios.js'
+            'axios$': 'axios/dist/axios.js',
+            'style': path.resolve('styles/')
         }
     },
 
@@ -26,19 +27,19 @@ module.exports = {
         rules: [
             {
                 test: /\.vue$/i,
-                use: "vue-loader" },
+                use: 'vue-loader' },
             {
                 test: /\.js$/i,
-                use: "babel-loader",
+                use: 'babel-loader',
                 exclude: '/node-modules/'
             },
             {
                 test: /\.css$/i,
-                use: "css-loader"
+                use: 'css-loader'
             },
             {
                 test: /\.html$/i,
-                use: "html-loader",
+                use: 'html-loader',
             }
         ]
     },

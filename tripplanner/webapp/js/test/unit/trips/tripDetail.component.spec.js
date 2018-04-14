@@ -7,7 +7,9 @@ describe("Trip Component", () => {
         const tripData = {
             destination: "a",
             start_date: "24/05/2018",
-            days_left: 5
+            end_date: "24/06/2018",
+            days_left: 5,
+            in_progress: false
         };
 
         // Act
@@ -18,10 +20,10 @@ describe("Trip Component", () => {
         });
 
         // Assert
-        const destinationLabel = wrapper.findAll("label").at(0).text();
-        const daysLeftLabel = wrapper.findAll("label").at(1).text();
-        expect(destinationLabel).toBe("Trip to a in 24/05/2018.");
-        expect(daysLeftLabel).toBe("5 day(s) left.");
+        const destinationLabel = wrapper.find("label.destination").text();
+        const daysLeftLabel = wrapper.find("label.days-left").text();
+        expect(destinationLabel).toBe("Trip to a");
+        expect(daysLeftLabel).toBe("Go in 5 day(s)");
     });
 
     test("Display overdue trip", () => {
@@ -29,6 +31,7 @@ describe("Trip Component", () => {
         const tripData = {
             destination: "a",
             start_date: "24/05/2018",
+            in_progress: false
         };
 
         // Act
@@ -39,9 +42,9 @@ describe("Trip Component", () => {
         });
 
         // Assert
-        const destinationLabel = wrapper.findAll("label").at(0).text();
-        const daysLeftLabel = wrapper.findAll("label").at(1).text();
-        expect(destinationLabel).toBe("Trip to a in 24/05/2018.");
-        expect(daysLeftLabel).toBe("Overdue.");
+        const destinationLabel = wrapper.find("label.destination").text();
+        const daysLeftLabel = wrapper.find("label.overdue").text();
+        expect(destinationLabel).toBe("Trip to a");
+        expect(daysLeftLabel).toBe("Finished");
     });
 });

@@ -34,7 +34,7 @@
 </script>
 
 <style lang="scss" scoped>
-    $bg-color: #32414d;
+    @import "~style/globals";
 
     section {
         padding: 1rem;
@@ -49,14 +49,14 @@
             list-style: none;
 
             li {
-                background-color: #fff;
+                background-color: $color1;
                 border-radius: .3rem;
                 display: inline-block;
                 padding: .5rem;
                 margin: 0 .4rem;
 
                 a {
-                    color: $bg-color;
+                    color: $white;
                 }
             }
         }

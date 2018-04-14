@@ -75,24 +75,19 @@
 </script>
 
 <style lang="scss" scoped>
-
-    $gray-border: rgba(203,203,210,0.4);
-    $bg-color: #32414d;
-    $bg-color2: rgba(50, 65, 77, 0.91);
+    @import "~style/globals";
 
     section {
-        /*box-shadow: 0 19px 38px rgba(0,0,0,0.30), 0 15px 12px rgba(0,0,0,0.22);*/
         text-align: center;
-        /*width: 80%;*/
 
         form {
-            background-color: #fff;
             border-radius: .3rem;
-            color: $bg-color;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+            color: $color2;
             display: inline-block;
-            padding: 1rem;
+            padding: 1.2rem;
             margin-top: 2rem;
-
+            text-align: left;
 
             h2 {
                 margin-bottom: .5rem;
@@ -105,6 +100,7 @@
                 span {
                     align-content: center;
                     border-right: 1px solid $gray-border;
+                    background: none;
                     display: grid;
                     top: 0;
                     left: 0;
@@ -125,15 +121,12 @@
                     transition: border .2s linear;
 
                     &:focus {
-                        border: 1px solid $bg-color;
+                        border: 1px solid $color1;
                     }
                 }
             }
 
             button {
-                background: linear-gradient(to right, $bg-color, $bg-color2);
-                border-radius: .3rem;
-                color: white;
                 font-size: 1rem;
                 height: 3rem;
                 width: 17rem;
