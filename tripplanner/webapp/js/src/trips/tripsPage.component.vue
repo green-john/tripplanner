@@ -1,19 +1,18 @@
 <template lang="pug">
   section
-      div.errors
-          p.individualError(v-for="error in errors") {{ error }}
-
+      h2 List of trips
       div.trip-filter
           trip-filter(:$trips="this.$trips")
 
       nav
-          button.add(@click="showCreate = !showCreate")
+          button.add(@click="toggleDialog")
               span.fas.fa-external-link-alt
               span Add
 
       transition(name='slide-down')
-          div.modal(v-show='showCreate' @click="showCreate = !showCreate")
+          div.modal(v-show='showCreate' @click="toggleDialog")
               div.modal-wrapper(@click.stop="")
+                  span.close-btn.far.fa-times-circle(@click="showCreate = false")
                   create-trip(:$trips="this.$trips")
 
       div.upcoming-trips
@@ -40,6 +39,12 @@
             }
         },
 
+        methods: {
+            toggleDialog() {
+                this.showCreate = !this.showCreate;
+            }
+        },
+
         components: {
             'trip-list': TripList,
             'create-trip': CreateTrip,
@@ -55,7 +60,10 @@
 
     section {
         display: grid;
+        background-color: $white;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
         padding: 1rem;
+        margin: 1rem 5%;
 
         nav {
             display: grid;
@@ -83,7 +91,23 @@
             width: 100vw;
 
             div.modal-wrapper {
-                margin: 2rem;
+                margin: 2rem auto;
+                max-width: 20rem;
+                position: relative;
+
+                span.close-btn {
+                    background-color: $color2;
+                    border-radius: 49%;
+                    color: $white;
+                    font-size: 1.2rem;
+                    position: absolute;
+                    right: -5;
+                    top: -5;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+                }
             }
         }
     }

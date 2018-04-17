@@ -81,6 +81,7 @@
             form {
                 display: grid;
                 grid-auto-flow: column;
+                grid-template-columns: repeat(3, 1fr) auto;
 
                 input {
                     background: none;
@@ -100,6 +101,7 @@
                 button {
                     font-size: .8rem;
                     padding: 0 .5rem;
+                    max-width: 2rem;
                 }
             }
         }

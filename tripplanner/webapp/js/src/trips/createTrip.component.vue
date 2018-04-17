@@ -3,10 +3,9 @@
         h2 Create Trip
 
         transition
-            label.status.success(v-if="successMsg") {{ successMsg }}
+            p.status.success(v-if="successMsg") {{ successMsg }}
 
-        transition
-            label.status.error(v-if="errorMsg") {{ errorMsg }}
+        p.status.error(v-if="errors" v-for="error in errors") {{ error }}
         form(@submit.prevent="createTrip")
             label(for="destination") Destination
             input(id="destination" v-model="destination" placeholder="Destination")
@@ -38,14 +37,15 @@
                 comment: "",
 
                 successMsg: null,
-                errorMsg: null,
                 errors: []
             }
         },
 
         methods: {
             createTrip() {
-                this.errorMsg = this.successMsg = null;
+                this.successMsg = null;
+                this.errors = [];
+
                 const tripData = Object.create(null);
                 tripData.destination = this.destination;
                 tripData.start_date = formatDate(this.start_date);
@@ -53,9 +53,6 @@
                 tripData.comment = this.comment;
 
                 if (!this._validateFields(tripData)) {
-                    this.errorMsg = this.errors.reduce((acc, currentVal) => {
-                        return acc + "\n" + currentVal;
-                    });
                     return;
                 }
 
@@ -66,7 +63,6 @@
                     this.end_date = "";
                     this.comment = "";
                 }).catch(response => {
-                    this.errorMsg = "Error creating trip";
                     this._handleErrors(response);
                 });
             },
@@ -83,8 +79,7 @@
             },
 
             _handleErrors(response) {
-                console.log(response);
-                this.errors = [response.data.error];
+                this.errors = [response.data.statusText];
             }
         }
     }
@@ -104,21 +99,20 @@
             padding: .5rem;
         }
 
-        label.status {
+        .status {
             border-radius: .2rem;
             color: white;
             display: block;
-            margin: 0 .7rem;
+            margin: .2rem .3rem;
             padding: .3rem;
             text-align: center;
-            white-space: pre;
         }
 
-        label.error {
-            background-color: #ff686d;
+        .error {
+            background-color: $blood-color;
         }
 
-        label.success {
+        .success {
             background-color: $grass-color;
         }
 
@@ -145,7 +139,7 @@
             }
 
             button {
-                background-color: $color1;
+                background-color: $color2;
                 border-radius: .3rem;
                 color: #fff;
                 font-size: 1rem;

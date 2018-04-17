@@ -2,6 +2,7 @@
     section
         form(@submit.prevent="loginUser")
             h2 Welcome back!
+            p.error(v-for="error in errors") {{error}}
             div.input-field
                 span.fas.fa-user
                 input#username(v-model="username" placeholder="username")
@@ -9,7 +10,6 @@
                 span.fas.fa-lock
                 input#password(type="password" v-model="password" placeholder="password")
 
-            p.individualError(v-for="error in errors") {{error}}
             button(@click.prevent="loginUser") Log in
 </template>
 
@@ -48,7 +48,7 @@
                         return userInfo;
                     })
                     .catch(error => {
-                        this.errors = [error.response.data];
+                        this.errors = [error.response.statusText];
                     })
             },
 
@@ -81,6 +81,7 @@
         text-align: center;
 
         form {
+            background-color: $white;
             border-radius: .3rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
             color: $color2;
@@ -94,7 +95,7 @@
             }
 
             div.input-field {
-                margin: 1rem 0;
+                margin-top: 1rem;
                 position: relative;
 
                 span {
@@ -126,9 +127,20 @@
                 }
             }
 
+            p.error {
+                background-color: $blood-color;
+                border-radius: .2rem;
+                color: $white;
+                font-size: .9rem;
+                margin-top: .3rem;
+                padding: .3rem;
+                text-align: center;
+            }
+
             button {
                 font-size: 1rem;
                 height: 3rem;
+                margin-top: 1rem;
                 width: 17rem;
             }
         }

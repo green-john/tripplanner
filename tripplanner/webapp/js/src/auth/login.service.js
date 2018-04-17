@@ -28,9 +28,9 @@ export class LoginService {
         }).then(response => {
             this.cacheUser(response.data);
             return response.data;
-        }).catch(response => {
-            this._handleErrors(response);
-            throw response;
+        }).catch(error => {
+            this._clearUser(error);
+            throw error;
         });
     }
 
@@ -43,7 +43,7 @@ export class LoginService {
             this.cacheUser(response.data);
             return response.data;
         }).catch(error => {
-            this._handleErrors(error);
+            this._clearUser(error);
             throw error;
         });
     }
@@ -100,21 +100,8 @@ export class LoginService {
         return Promise.resolve(false);
     }
 
-    _handleErrors(error) {
+    _clearUser() {
         this.userLoggedIn = false;
         this.userInfo = null;
-        console.log(error);
-
-        if (error.response) {
-            // Request made server responded with something other
-            // than 2xx
-            console.log("Response", error.response);
-        } else if (error.request) {
-            // No response received
-            console.log('Request:', error.request);
-        } else {
-            // Weird shit happened
-            console.log(error);
-        }
     }
 }

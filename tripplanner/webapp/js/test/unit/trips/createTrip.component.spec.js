@@ -31,7 +31,7 @@ describe("Create Trip component", () => {
 
     test("Create trip service fails", async () => {
         // Arrange
-        $trips.createTrip.mockReturnValue(Promise.reject({data: {error: "Error"}}));
+        $trips.createTrip.mockReturnValue(Promise.reject({data: {statusText: "Error"}}));
         const wrapper = shallow(CreateTripComponent, {
             propsData: {
                 $trips
@@ -49,7 +49,7 @@ describe("Create Trip component", () => {
 
         // Assert
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.errorMsg).toBe("Error creating trip");
+        expect(wrapper.vm.errors[0]).toBe("Error");
         expect(wrapper.vm.errors).toHaveLength(1);
     });
 

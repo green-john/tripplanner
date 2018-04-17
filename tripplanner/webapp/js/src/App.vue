@@ -41,7 +41,7 @@
     }
 
     body {
-        background-color: $white;
+        background-color: #eee;
         font-family: 'Roboto', Helvetica, sans-serif;
         font-size: 16px;
 
@@ -55,16 +55,4 @@
             outline: none;
         }
     }
-
-
-
-    /*.individualError {*/
-        /*background: red;*/
-        /*-webkit-border-radius: 0.3em;*/
-        /*-moz-border-radius: 0.3em;*/
-        /*border-radius: 0.3em;*/
-
-        /*padding: 0.3em;*/
-        /*margin: 0.3em;*/
-    /*}*/
 </style>

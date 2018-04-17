@@ -37,7 +37,11 @@
     @import "~style/globals";
 
     section {
+        background-color: $white;
+        box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+        margin: 1rem 5%;
         padding: 1rem;
+        height: 50vh;
 
         a {
             color: white;
