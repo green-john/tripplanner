@@ -1,8 +1,6 @@
 const path = require('path');
 
 module.exports = {
-    watch: true,
-
     entry: {
         main: 'main'
     },
