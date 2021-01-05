@@ -22,7 +22,7 @@
         "webpack": "^2.7.0"
     },
     "dependencies": {
-        "axios": "^0.16.2",
+        "axios": "^0.21.1",
         "npm": "^5.8.0",
         "vue": "^2.4.2",
         "vue-router": "^2.7.0"
